@@ -17,9 +17,11 @@ class MusicPlayer:
         self.root.rowconfigure(1, weight=1)
         self.root.rowconfigure(2, weight=1)
         self.root.title = "Music Player"
-        self.is_playing = False
         self.play_icon = tk.PhotoImage(file="play_arrow.png").subsample(2, 2)
         self.pause_icon = tk.PhotoImage(file="pause.png").subsample(2, 2)
+        self.playlist=[]
+        # setup
+        self.is_playing = False
         pygame.init()
         pygame.mixer.init()
         self.music = pygame.mixer.music
@@ -27,16 +29,18 @@ class MusicPlayer:
         self.open_folder = ttk.Button(
             self.root, command=self.choose_folder, text="Open", width=10
         )
-        self.open_folder.grid(row=0, column=0, sticky="nw")
 
         self.scrollbar = ttk.Scrollbar(self.root)
-        self.scrollbar.grid(row=0, column=2, sticky="nes", pady=30)
 
         self.song_list = tk.Listbox(
-            self.root, borderwidth=50, yscrollcommand=self.scrollbar.set
+            self.root,
+            borderwidth=5,
+            yscrollcommand=self.scrollbar.set,
+            activestyle="dotbox",
+            width=30,
+            listvariable=self.playlist
         )
-        self.song_list.bind("<<ListboxSelect>>", self.play)
-        self.song_list.grid(row=0, column=2, sticky="nes", pady=30, padx=15)
+        
 
         self.play_button = ttk.Button(
             self.root,
@@ -45,12 +49,20 @@ class MusicPlayer:
             width=10,
             image=self.pause_icon,
         )
+        #widget placement
         self.play_button.grid(row=2, column=0, sticky="sw")
+        self.open_folder.grid(row=0, column=0, sticky="nw")
+        self.scrollbar.grid(row=0, column=2, sticky="nes", pady=30)
+        self.song_list.grid(row=0, column=2, sticky="nes", pady=30, padx=15)
+        #binding events
+        self.song_list.bind("<<ListboxSelect>>", self.play)
 
     def play(self, event):
-        for e in event.widget.curselection():
-            self.music.load(open(self.song_list.get(e), "rb"))
-        self.music.play()
+        print(self.playlist)
+        self.music.unload()
+        for file in event.widget.curselection():
+            self.music.load(open(self.song_list.get(file), "rb"))
+            self.music.play()
 
     def play_pause(self):
         if not self.is_playing:
