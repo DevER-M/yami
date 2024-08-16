@@ -9,11 +9,11 @@ class MusicPlayer(tk.Tk):
     def __init__(self):
         super().__init__()
         self.geometry("800x500")
-        self.themename="darkly"
+        self.themename = "darkly"
         self.columnconfigure(0, weight=2)
         self.columnconfigure(1, weight=1)
         self.columnconfigure(2, weight=1)
-        self.bg="black"
+        self.bg = "black"
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)
         self.rowconfigure(2, weight=1)
@@ -23,7 +23,7 @@ class MusicPlayer(tk.Tk):
         self.playlist = []
         self.current_folder = ""
         self.playlist_index = 0
-        
+
         # setup
         self.is_playing = False
         pygame.init()
@@ -107,14 +107,14 @@ class MusicPlayer(tk.Tk):
         else:
             self.playlist_index = self.playlist_index + 1
             self.load_and_play_song(self.playlist_index)
-            self.song_list.activate(self.playlist_index+1)
+            self.song_list.activate(self.playlist_index + 1)
 
     def load_and_play_song(self, index):
         print(self.playlist)
-        if index==0:
+        if index == 0:
             self.music.load(self.playlist[index])
         else:
-            self.music.load(self.playlist[index-1])
+            self.music.load(self.playlist[index - 1])
         self.music.play()
 
 
