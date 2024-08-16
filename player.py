@@ -63,6 +63,7 @@ class MusicPlayer(tk.Tk):
 
     def play(self, event):
         self.music.stop()
+        print(event.widget.curselection()[0])
         self.playlist_index = event.widget.curselection()[0]
         self.load_and_play_song(self.playlist_index)
 
@@ -92,6 +93,7 @@ class MusicPlayer(tk.Tk):
             ):
                 self.playlist.append(file)
                 self.song_list.insert("end", file)
+            print(self.playlist)
 
     def check_for_events(self):
         for event in pygame.event.get():
@@ -100,15 +102,19 @@ class MusicPlayer(tk.Tk):
         self.after(100, self.check_for_events)
 
     def play_next_song(self, event=None):
-        if self.playlist_index == len(self.playlist) - 1:
+        if self.playlist_index == len(self.playlist):
             pass
         else:
             self.playlist_index = self.playlist_index + 1
             self.load_and_play_song(self.playlist_index)
+            self.song_list.activate(self.playlist_index+1)
 
     def load_and_play_song(self, index):
         print(self.playlist)
-        self.music.load(self.playlist[index])
+        if index==0:
+            self.music.load(self.playlist[index])
+        else:
+            self.music.load(self.playlist[index-1])
         self.music.play()
 
 
