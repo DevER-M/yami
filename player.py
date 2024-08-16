@@ -48,7 +48,7 @@ class MusicPlayer(ttk.Window):
         self.open_folder.grid(row=0, column=0, sticky="nw")
         self.scrollbar.grid(row=0, column=2, sticky="nes", pady=30)
         self.song_list.grid(row=0, column=2, sticky="nes", pady=30, padx=15)
-        self.bottom_bar.grid()
+        self.bottom_bar.grid(row=3,column=0,sticky="nsew")
         # binding events
         self.song_list.bind("<<ListboxSelect>>", self.play)
         self.bind("<<NextSong>>", self.play_next_song)
@@ -122,7 +122,7 @@ class BottomBar(ttk.Frame):
             image=pause_icon,
         )
 
-        self.play_button.grid(row=2, column=0, sticky="sw")
+        self.play_button.grid(row=0, column=0, sticky="sw")
 
 
 music_player = MusicPlayer()
