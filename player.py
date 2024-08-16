@@ -19,38 +19,27 @@ class MusicPlayer(ttk.Window):
         self.play_icon = ttk.PhotoImage(file="play_arrow.png").subsample(2, 2)
         self.pause_icon = ttk.PhotoImage(file="pause.png").subsample(2, 2)
         self.playlist = []
+        self.is_playing = False
         self.current_folder = ""
         self.playlist_index = 0
 
         # setup
-        self.is_playing = False
         pygame.init()
         pygame.mixer.init()
         self.music = pygame.mixer.music
         pygame.mixer.music.set_endevent(pygame.USEREVENT)
         self.bottom_bar = BottomBar(self, self.pause_icon, self.play_pause)
-
+        self.playlist_frame = PlaylistFrame(self, self.play)
+        
         self.open_folder = ttk.Button(
             self, command=self.choose_folder, text="Open", width=10
         )
 
-        self.scrollbar = ttk.Scrollbar(self)
-
-        self.song_list = tk.Listbox(
-            self,
-            borderwidth=5,
-            yscrollcommand=self.scrollbar.set,
-            activestyle="dotbox",
-            width=30,
-        )
-
         # widget placement
         self.open_folder.grid(row=0, column=0, sticky="nw")
-        self.scrollbar.grid(row=0, column=2, sticky="nes", pady=30)
-        self.song_list.grid(row=0, column=2, sticky="nes", pady=30, padx=15)
-        self.bottom_bar.grid(row=3,column=0,sticky="nsew")
+        self.playlist_frame.grid(row=0, column=2, sticky="nes", pady=30, padx=15)
+        self.bottom_bar.grid(row=3, column=0, sticky="nsew")
         # binding events
-        self.song_list.bind("<<ListboxSelect>>", self.play)
         self.bind("<<NextSong>>", self.play_next_song)
         self.after(100, self.check_for_events)
 
@@ -58,11 +47,11 @@ class MusicPlayer(ttk.Window):
         self.music.stop()
         print(event.widget.curselection()[0])
         self.playlist_index = event.widget.curselection()[0]
-        self.load_and_play_song(self.playlist_index)
+        self.load_and_play_song(self.playlist_index+1)
 
     def choose_folder(self):
         self.current_folder = filedialog.askdirectory(title="Select Music Folder")
-        self.song_list.delete(0, tk.END)
+        self.playlist_frame.song_list.delete(0, tk.END)
         self.playlist.clear()
         if self.current_folder:
             for file in filter(
@@ -75,7 +64,7 @@ class MusicPlayer(ttk.Window):
                 os.listdir(self.current_folder),
             ):
                 self.playlist.append(file)
-                self.song_list.insert("end", file)
+                self.playlist_frame.song_list.insert("end", file)
 
     def check_for_events(self):
         for event in pygame.event.get():
@@ -91,7 +80,7 @@ class MusicPlayer(ttk.Window):
         else:
             self.playlist_index = self.playlist_index + 1
             self.load_and_play_song(self.playlist_index)
-            self.song_list.activate(self.playlist_index)
+            self.playlist_frame.song_list.activate(self.playlist_index)
 
     def load_and_play_song(self, index):
         if index == 0:
@@ -113,8 +102,9 @@ class MusicPlayer(ttk.Window):
 
 class BottomBar(ttk.Frame):
     def __init__(self, parent, pause_icon, play_command):
-        super().__init__(parent)
-
+        super().__init__(
+            parent,
+        )
         self.play_button = ttk.Button(
             self,
             command=play_command,
@@ -124,6 +114,19 @@ class BottomBar(ttk.Frame):
 
         self.play_button.grid(row=0, column=0, sticky="sw")
 
+
+class PlaylistFrame(ttk.Frame):
+    def __init__(self, parent, song_select_command):
+        super().__init__(parent)
+        self.song_list = tk.Listbox(self, borderwidth=5, activestyle="dotbox", width=30,height=15,border=10)
+        self.scrollbar = ttk.Scrollbar(self, command=self.song_list.yview)
+        self.song_list.config(yscrollcommand=self.scrollbar.set)
+
+        self.song_list.grid(column=0,row=0,sticky="nesw")
+        self.scrollbar.grid(column=0,row=0,sticky="nes")
+
+        self.song_list.bind("<<ListboxSelect>>", song_select_command)
+    
 
 music_player = MusicPlayer()
 music_player.mainloop()
