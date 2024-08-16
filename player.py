@@ -28,7 +28,7 @@ class MusicPlayer(ttk.Window):
         pygame.mixer.init()
         self.music = pygame.mixer.music
         pygame.mixer.music.set_endevent(pygame.USEREVENT)
-        self.bottom_bar = BottomBar(self, self.pause_icon, self.play_pause)
+        self.bottom_bar = BottomBar(self, self.pause_icon, self.play_pause,self.play_next_song)
         self.playlist_frame = PlaylistFrame(self, self.play)
         
         self.open_folder = ttk.Button(
@@ -101,10 +101,11 @@ class MusicPlayer(ttk.Window):
 
 
 class BottomBar(ttk.Frame):
-    def __init__(self, parent, pause_icon, play_command):
+    def __init__(self, parent, pause_icon, play_command,next_command):
         super().__init__(
             parent,
         )
+
         self.play_button = ttk.Button(
             self,
             command=play_command,
@@ -112,7 +113,14 @@ class BottomBar(ttk.Frame):
             image=pause_icon,
         )
 
-        self.play_button.grid(row=0, column=0, sticky="sw")
+        self.next_button = ttk.Button(
+            self,
+            command=next_command,
+            width=10,
+            text="next"
+        )
+        self.play_button.grid(row=0, column=0, sticky="sw",pady=10)
+        self.next_button.grid(row=0,column=2,sticky="e",padx=10,pady=10)
 
 
 class PlaylistFrame(ttk.Frame):
@@ -125,7 +133,7 @@ class PlaylistFrame(ttk.Frame):
         self.song_list.grid(column=0,row=0,sticky="nesw")
         self.scrollbar.grid(column=0,row=0,sticky="nes")
 
-        self.song_list.bind("<<ListboxSelect>>", song_select_command)
+        self.song_list.bind("<Double-1>", song_select_command)
     
 
 music_player = MusicPlayer()
