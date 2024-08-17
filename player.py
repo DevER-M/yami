@@ -97,18 +97,25 @@ class MusicPlayer(ttk.Window):
                 self.play_next_song()
         self.after(EVENT_INTERVAL, self.check_for_events)
 
+
     def play_next_song(self, event=None):
         if not self.playlist:
             return
-        if self.playlist_index >= len(self.playlist) -1:
+        
+        #PLAY FROM BEGINING
+        elif self.playlist_index >= len(self.playlist) -1:
             self.playlist_index = 0
         else:
-            self.playlist_index += 1
+            self.playlist_index += 1  
         self.load_and_play_song(self.playlist_index)
+
+        #UPDATE SELECTION
         self.playlist_frame.song_list.selection_clear(0, tk.END)
-        self.playlist_frame.song_list.select_set(self.playlist_index)
+        self.playlist_frame.song_list.select_set(self.playlist_index)         
 
     def load_and_play_song(self, index):
+        self.music.unload()
+        self.music.stop()
         self.music.load(self.playlist[index])
         self.music.play()
         self.state = PlayerState.PLAYING
@@ -192,21 +199,24 @@ class PlaylistFrame(ttk.Frame):
         self.parent = parent
 
         self.song_list = tk.Listbox(
-            self, borderwidth=5, activestyle="dotbox", width=30, height=15, border=10
+            self, 
+            borderwidth=5, 
+            activestyle="dotbox", 
+            width=30, 
+            height=15, 
+            border=10
         )
-
         self.song_list.grid(column=0, row=0, sticky="nesw")
 
         self.scrollbar = ttk.Scrollbar(self, command=self.song_list.yview)
         self.scrollbar.grid(column=0, row=0, sticky="nes")
-        self.song_list.config(yscrollcommand=self.scrollbar.set)
 
+        self.song_list.config(yscrollcommand=self.scrollbar.set)
         self.song_list.bind("<<ListboxSelect>>", self.play)
 
     def play(self, event):
-        self.parent.music.load(self.parent.playlist[event.widget.curselection()[0]])
-        self.parent.music.play()
-
+        index = event.widget.curselection()[0]
+        self.parent.load_and_play_song(index)
 
 if __name__ == "__main__":
     music_player = MusicPlayer()
