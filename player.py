@@ -51,7 +51,7 @@ class MusicPlayer(ctk.CTk):
             self.play_icon, 
             self.play_next_song
         )
-        #self.playlist_frame = PlaylistFrame(self)
+        self.playlist_frame = PlaylistFrame(self)
         self.topbar = TopBar(self)
         
         #BINDINGS AND EVENTS
@@ -60,8 +60,9 @@ class MusicPlayer(ctk.CTk):
         
         #WIDGET PLACEMENT
         self.topbar.pack(side=tk.TOP,fill=tk.X)
-        ##self.playlist_frame.grid(row=0, column=2, sticky="nes", pady=30, padx=15)
         self.bottom_bar.pack(side=tk.BOTTOM,fill=tk.X)
+        self.playlist_frame.pack(side=tk.RIGHT)
+        
 
     
     
