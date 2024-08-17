@@ -16,21 +16,30 @@ class MusicPlayer(ttk.Window):
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)
         self.rowconfigure(2, weight=1)
-        self.play_icon = ttk.PhotoImage(file="play_arrow.png").subsample(2, 2)
-        self.pause_icon = ttk.PhotoImage(file="pause.png").subsample(2, 2)
+        # useful
         self.playlist = []
         self.is_playing = False
         self.current_folder = ""
         self.playlist_index = 0
-
-        # setup
+        # setup pygame
         pygame.init()
         pygame.mixer.init()
         self.music = pygame.mixer.music
         pygame.mixer.music.set_endevent(pygame.USEREVENT)
-        self.bottom_bar = BottomBar(self, self.pause_icon, self.play_pause,self.play_next_song)
-        self.playlist_frame = PlaylistFrame(self, self.play)
-        
+        # icons
+        self.play_icon = ttk.PhotoImage(file="play_arrow.png").subsample(2, 2)
+        self.pause_icon = ttk.PhotoImage(file="pause.png").subsample(2, 2)
+        # frames
+        self.bottom_bar = BottomBar(
+            self, self.pause_icon, self.play_icon, self.play_next_song
+        )
+        self.playlist_frame = PlaylistFrame(self)
+        # bindings and events
+        self.bind("<<NextSong>>", self.play_next_song)
+        self.bind("<Control-o>", self.choose_folder)
+        self.bind("<F10>", self.play_next_song)
+        self.after(100, self.check_for_events)
+
         self.open_folder = ttk.Button(
             self, command=self.choose_folder, text="Open", width=10
         )
@@ -39,17 +48,8 @@ class MusicPlayer(ttk.Window):
         self.open_folder.grid(row=0, column=0, sticky="nw")
         self.playlist_frame.grid(row=0, column=2, sticky="nes", pady=30, padx=15)
         self.bottom_bar.grid(row=3, column=0, sticky="nsew")
-        # binding events
-        self.bind("<<NextSong>>", self.play_next_song)
-        self.after(100, self.check_for_events)
 
-    def play(self, event):
-        self.music.stop()
-        print(event.widget.curselection()[0])
-        self.playlist_index = event.widget.curselection()[0]
-        self.load_and_play_song(self.playlist_index+1)
-
-    def choose_folder(self):
+    def choose_folder(self, event=None):
         self.current_folder = filedialog.askdirectory(title="Select Music Folder")
         self.playlist_frame.song_list.delete(0, tk.END)
         self.playlist.clear()
@@ -73,68 +73,85 @@ class MusicPlayer(ttk.Window):
         self.after(100, self.check_for_events)
 
     def play_next_song(self, event=None):
-        if self.playlist_index == len(self.playlist):
-            pass
-        if self.playlist_index >= len(self.playlist):
+        if self.playlist_index >= len(self.playlist) - 1:
             self.playlist_index = 0
         else:
-            self.playlist_index = self.playlist_index + 1
-            self.load_and_play_song(self.playlist_index)
-            self.playlist_frame.song_list.activate(self.playlist_index)
+            self.playlist_index += 1
+        self.load_and_play_song(self.playlist_index)
+        self.playlist_frame.song_list.selection_clear(0, tk.END)
+        self.playlist_frame.song_list.select_set(self.playlist_index)
 
     def load_and_play_song(self, index):
-        if index == 0:
-            self.music.load(self.playlist[index])
-        else:
-            self.music.load(self.playlist[index - 1])
+        self.music.load(self.playlist[index])
         self.music.play()
-
-    def play_pause(self):
-        if not self.is_playing:
-            self.bottom_bar.play_button.config(image=self.pause_icon)
-            self.music.unpause()
-            self.is_playing = True
-        else:
-            self.music.pause()
-            self.bottom_bar.play_button.config(image=self.play_icon)
-            self.is_playing = False
+        self.is_playing = True
+        self.bottom_bar.update_play_button(self.is_playing)
 
 
 class BottomBar(ttk.Frame):
-    def __init__(self, parent, pause_icon, play_command,next_command):
+    def __init__(self, parent: MusicPlayer, pause_icon, play_icon, play_next_command):
         super().__init__(
             parent,
         )
+        self.music_player = parent
+        self.pause_icon = pause_icon
+        self.play_icon = play_icon
+        self.play_next_command = play_next_command
 
         self.play_button = ttk.Button(
             self,
-            command=play_command,
+            command=self.play_pause,
             width=10,
             image=pause_icon,
         )
 
         self.next_button = ttk.Button(
-            self,
-            command=next_command,
-            width=10,
-            text="next"
+            self, command=play_next_command, width=10, text="next"
         )
-        self.play_button.grid(row=0, column=0, sticky="sw",pady=10)
-        self.next_button.grid(row=0,column=2,sticky="e",padx=10,pady=10)
+        self.play_button.grid(row=0, column=0, sticky="sw", pady=10)
+        self.next_button.grid(row=0, column=2, sticky="e", padx=10, pady=10)
+
+    def play_pause(self):
+        if self.music_player.is_playing:
+            self.music_player.music.pause()
+            self.music_player.is_playing = False
+        else:
+            self.music_player.music.unpause()
+            self.music_player.is_playing = True
+        self.update_play_button(self.music_player.is_playing)
+
+    def update_play_button(self, is_playing):
+        if is_playing:
+            self.play_button.config(image=self.pause_icon)
+        else:
+            self.play_button.config(image=self.play_icon)
 
 
 class PlaylistFrame(ttk.Frame):
-    def __init__(self, parent, song_select_command):
+    def __init__(self, parent: MusicPlayer):
         super().__init__(parent)
-        self.song_list = tk.Listbox(self, borderwidth=5, activestyle="dotbox", width=30,height=15,border=10)
+        self.parent = parent
+
+        self.song_list = tk.Listbox(
+            self, borderwidth=5, activestyle="dotbox", width=30, height=15, border=10
+        )
+
+        self.song_list.grid(column=0, row=0, sticky="nesw")
+
         self.scrollbar = ttk.Scrollbar(self, command=self.song_list.yview)
+        self.scrollbar.grid(column=0, row=0, sticky="nes")
         self.song_list.config(yscrollcommand=self.scrollbar.set)
 
-        self.song_list.grid(column=0,row=0,sticky="nesw")
-        self.scrollbar.grid(column=0,row=0,sticky="nes")
+        self.song_list.bind("<Double-1>", self.play)
 
-        self.song_list.bind("<Double-1>", song_select_command)
-    
+    def play(self, event):
+        self.parent.music.stop()
+        print(event.widget.curselection()[0])
+        self.playlist_index = event.widget.curselection()[0]
+        self.parent.load_and_play_song(self.parent.playlist_index)
+        self.parent.is_playing = True
+        self.parent.bottom_bar.update_play_button(self.parent.is_playing)
+
 
 music_player = MusicPlayer()
 music_player.mainloop()
