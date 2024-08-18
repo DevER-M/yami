@@ -7,6 +7,10 @@ from enum import Enum
 from mutagen import File,id3
 from PIL import Image
 from pathlib import Path
+from PIL import ImageTk
+from io import BytesIO
+import tempfile
+
 
 GEOMETRY = "800x500"
 TITLE = "Music Player"
@@ -59,6 +63,7 @@ class MusicPlayer(ctk.CTk):
         self.playlist_frame = PlaylistFrame(self)
         self.topbar = TopBar(self)
         self.bottom_frame = BottomFrame(self)
+        self.cover_art_frame = CoverArtFrame(self)
 
         # BINDINGS AND EVENTS
         self.bind("<F10>", self.play_next_song)
@@ -72,6 +77,7 @@ class MusicPlayer(ctk.CTk):
         self.bottom_frame.pack(side=tk.BOTTOM, fill=tk.X)
         self.control_bar.pack(side=tk.BOTTOM, fill=tk.X)
         self.playlist_frame.pack(side=tk.RIGHT)
+        self.cover_art_frame.pack(side=tk.LEFT)
 
     def play_next_song(self,event=None):
         if not self.playlist:
@@ -95,6 +101,11 @@ class MusicPlayer(ctk.CTk):
         self.music.play()
         self.state = PlayerState.PLAYING
         self.control_bar.update_play_button(self.state)
+        cover_image = self.get_album_cover(self.playlist[index])
+        
+        
+        self.cover_art_frame.cover_art_label.configure(image=cover_image)
+        
         self.control_bar.music_title_label.configure(text=self.get_song_title(self.playlist[index]))
         self.bottom_frame.start_progress_bar(self.get_song_length(self.playlist[index]))
 
@@ -114,8 +125,32 @@ class MusicPlayer(ctk.CTk):
                 audio = id3.ID3(file_path)
                 return audio["TIT2"].text[0]
         except:
-            return ""    
+            return ""
         
+    def get_album_cover(self, file_path):
+        file_path = file_path
+        if not file_path.endswith(".mp3"):
+            return None
+        else:
+            try:
+                audio_file = id3.ID3(file_path)
+                cover_data = None
+                for tag in audio_file.getall("APIC"):
+                    if tag.mime == "image/jpeg" or tag.mime == "image/png":
+                        cover_data = tag.data
+                        break
+                if cover_data:
+                    # Save the cover data to a temporary file
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as temp_file:
+                        temp_file.write(cover_data)
+                        temp_path = temp_file.name
+                    
+                    # Load the image using CTkImage
+                    return ctk.CTkImage(Image.open(temp_path), size=(200, 200))
+                return None  # Return None if no cover found
+            except:
+                return None
+
     def get_song_position(self):
         return pygame.mixer.music.get_pos() / 1000
 
@@ -343,23 +378,37 @@ class TopBar(ctk.CTkFrame):
 
     # FOR ADDING SONGS TO PLAYLIST
     def choose_folder(self, _event=None):
-        self.current_folder = filedialog.askdirectory(title="Select Music Folder")
+        self.parent.current_folder = filedialog.askdirectory(title="Select Music Folder")
 
         # CLEAR PLAYLIST AND LISTBOX
         self.parent.playlist_frame.song_list.delete(0, tk.END)
         self.parent.playlist.clear()
 
         # FILTER MUSIC FILES
-        if self.current_folder:
+        if self.parent.current_folder:
             for file in filter(
                 lambda x: (
-                    x if os.path.isfile(x) and x.endswith(SUPPORTED_FORMATS) else None
+                    x if os.path.isfile(os.path.join(self.parent.current_folder,x)) and x.endswith(SUPPORTED_FORMATS) else None
                 ),
-                os.listdir(self.current_folder),
+                os.listdir(self.parent.current_folder),
             ):
-                self.parent.playlist.append(file)
+                self.parent.playlist.append(os.path.join(self.parent.current_folder,file))
                 
                 self.parent.playlist_frame.song_list.insert("end", f"• {Path(file).stem}")
+
+
+class CoverArtFrame(ctk.CTkFrame):
+    def __init__(self,parent:MusicPlayer):
+        super().__init__(parent,corner_radius=10)
+        self.cover_art_label = ctk.CTkLabel(
+            self,
+            image=None,
+            text="",
+            width=200,
+            height=200,
+            fg_color="#141414"
+        )
+        self.cover_art_label.grid(sticky="swen",padx=5)
 
 
 if __name__ == "__main__":
