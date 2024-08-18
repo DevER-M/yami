@@ -5,7 +5,7 @@ import os
 import pygame
 from enum import Enum
 from mutagen import File,id3
-from PIL import Image
+from PIL import Image,ImageDraw
 from pathlib import Path
 import tempfile
 
@@ -148,11 +148,11 @@ class MusicPlayer(ctk.CTk):
                         temp_file.write(cover_data)
                         temp_path = temp_file.name
                     
-                    return ctk.CTkImage(Image.open(temp_path), size=(200, 200))
+                    return ctk.CTkImage(Image.open(temp_path),size=(250,250))
                 return None
             except:
                 return None
-    
+        
     def get_artist(self,filepath):
         pass
 
@@ -185,7 +185,7 @@ class ControlBar(ctk.CTkFrame):
             next_icon,
             play_next_command
             ):
-        super().__init__(parent,corner_radius=10,fg_color="#000000")
+        super().__init__(parent,corner_radius=10,fg_color="#121212")
 
         # SETUP
         self.music_player = parent
@@ -225,7 +225,7 @@ class ControlBar(ctk.CTkFrame):
             self,
             text="",
             font=("roboto",12),
-            fg_color="#000000",
+            fg_color="#121212",
             width=20,
             anchor="w",
         )
@@ -233,7 +233,7 @@ class ControlBar(ctk.CTkFrame):
             self,
             text="0:00",
             font=("roboto",12),
-            fg_color="#000000"
+            fg_color="#121212"
         )
 
         # PLACEMENT
@@ -331,18 +331,18 @@ class BottomFrame(ctk.CTkFrame):
 
 class PlaylistFrame(ctk.CTkFrame):
     def __init__(self, parent: MusicPlayer):
-        super().__init__(parent,corner_radius=10,fg_color="#000000")
+        super().__init__(parent,corner_radius=10,fg_color="#121212")
         self.parent = parent
 
         self.song_list = tk.Listbox(
             self, 
             borderwidth=5, 
             activestyle="dotbox", 
-            width=30, 
-            height=15,
+            width=32, 
+            height=18,
             relief="flat",
             bd=10,
-            bg="#000000",
+            bg="#121212",
             fg="#FFFFFF",
             selectbackground="#1f0469",
             font=("roboto",12)
@@ -366,7 +366,7 @@ class PlaylistFrame(ctk.CTkFrame):
 
 class TopBar(ctk.CTkFrame):
     def __init__(self, parent: MusicPlayer,folder_icon,music_icon):
-        super().__init__(parent, fg_color="#000000")
+        super().__init__(parent, fg_color="#121212")
         
         self.parent = parent
         
@@ -417,16 +417,18 @@ class TopBar(ctk.CTkFrame):
 
 class CoverArtFrame(ctk.CTkFrame):
     def __init__(self,parent:MusicPlayer):
-        super().__init__(parent,corner_radius=10)
+        super().__init__(parent,)
         self.cover_art_label = ctk.CTkLabel(
             self,
             image=None,
             text="",
-            width=200,
-            height=200,
-            fg_color="#141414"
+            width=250,
+            height=250,
+            fg_color="#141414",
+            corner_radius=10
+
         )
-        self.cover_art_label.grid(sticky="swen",padx=5)
+        self.cover_art_label.grid(sticky="swen",padx=10)
 
 
 if __name__ == "__main__":

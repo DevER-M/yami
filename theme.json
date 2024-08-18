@@ -2,7 +2,7 @@
   "CTk": {
     "fg_color": [
       "gray92",
-      "#000000"
+      "#121212"
     ]
   },
   "CTkToplevel": {
@@ -16,7 +16,7 @@
     "border_width": 0,
     "fg_color": [
       "gray86",
-      "#000000"
+      "#121212"
     ],
     "top_fg_color": [
       "gray81",
