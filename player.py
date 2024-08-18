@@ -44,12 +44,16 @@ class MusicPlayer(ctk.CTk):
         # ICONS
         self.play_icon = ctk.CTkImage(Image.open("play_arrow.png"))
         self.pause_icon = ctk.CTkImage(Image.open("pause.png"))
+        self.prev_icon = ctk.CTkImage(Image.open("skip_prev.png"))
+        self.next_icon = ctk.CTkImage(Image.open("skip_next.png"))
 
         # FRAMES
         self.control_bar = ControlBar(
             self, 
             self.pause_icon, 
             self.play_icon, 
+            self.prev_icon,
+            self.next_icon,
             self.play_next_song
         )
         self.playlist_frame = PlaylistFrame(self)
@@ -120,8 +124,16 @@ class MusicPlayer(ctk.CTk):
 
 
 class ControlBar(ctk.CTkFrame):
-    def __init__(self, parent: MusicPlayer, pause_icon, play_icon, play_next_command):
-        super().__init__(parent)
+    def __init__(
+            self, 
+            parent: MusicPlayer, 
+            pause_icon, 
+            play_icon, 
+            prev_icon,
+            next_icon,
+            play_next_command
+            ):
+        super().__init__(parent,corner_radius=10,fg_color="#141414")
 
         # SETUP
         self.music_player = parent
@@ -143,15 +155,17 @@ class ControlBar(ctk.CTkFrame):
             self,
             command=play_next_command,
             width=BUTTON_WIDTH,
-            text="next",
+            text="",
             corner_radius=10,
+            image=next_icon
         )
         self.prev_button = ctk.CTkButton(
             self,
-            text="prev",
+            text="",
             width=BUTTON_WIDTH,
             corner_radius=10,
             command=self.play_previous,
+            image=prev_icon
         )
 
         # PLACEMENT
