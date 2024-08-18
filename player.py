@@ -48,6 +48,8 @@ class MusicPlayer(ctk.CTk):
         self.pause_icon = ctk.CTkImage(Image.open("pause.png"))
         self.prev_icon = ctk.CTkImage(Image.open("skip_prev.png"))
         self.next_icon = ctk.CTkImage(Image.open("skip_next.png"))
+        self.folder_icon = ctk.CTkImage(Image.open("folder.png"))
+        self.music_icon = ctk.CTkImage(Image.open("music.png"))
 
         # FRAMES
         self.control_bar = ControlBar(
@@ -59,7 +61,7 @@ class MusicPlayer(ctk.CTk):
             self.play_next_song
         )
         self.playlist_frame = PlaylistFrame(self)
-        self.topbar = TopBar(self)
+        self.topbar = TopBar(self,self.folder_icon,self.music_icon)
         self.bottom_frame = BottomFrame(self)
         self.cover_art_frame = CoverArtFrame(self)
 
@@ -150,6 +152,9 @@ class MusicPlayer(ctk.CTk):
                 return None
             except:
                 return None
+    
+    def get_artist(self,filepath):
+        pass
 
     def get_song_position(self):
         return pygame.mixer.music.get_pos() / 1000
@@ -213,7 +218,8 @@ class ControlBar(ctk.CTkFrame):
             width=BUTTON_WIDTH,
             corner_radius=10,
             command=self.play_previous,
-            image=prev_icon
+            image=prev_icon,
+            
         )
         self.music_title_label = ctk.CTkLabel(
             self,
@@ -359,7 +365,7 @@ class PlaylistFrame(ctk.CTkFrame):
 
 
 class TopBar(ctk.CTkFrame):
-    def __init__(self, parent: MusicPlayer):
+    def __init__(self, parent: MusicPlayer,folder_icon,music_icon):
         super().__init__(parent, fg_color="#000000")
         
         self.parent = parent
@@ -371,12 +377,14 @@ class TopBar(ctk.CTkFrame):
             text="Open",
             font=("roboto", 15),
             width=70,
+            image=folder_icon
         )
         self.ytdl_placeholder = ctk.CTkButton(
             self, 
             text="Download", 
             font=("roboto", 15), 
-            width=70
+            width=70,
+            image=music_icon
         )
 
         # WIDGET PLACEMENT
@@ -416,7 +424,7 @@ class CoverArtFrame(ctk.CTkFrame):
             text="",
             width=200,
             height=200,
-            fg_color="#000000"
+            fg_color="#141414"
         )
         self.cover_art_label.grid(sticky="swen",padx=5)
 
