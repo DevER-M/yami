@@ -335,3 +335,4 @@ class TopBar(ctk.CTkFrame):
 if __name__ == "__main__":
     music_player = MusicPlayer()
     music_player.mainloop()
+    
