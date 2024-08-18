@@ -4,9 +4,9 @@ import tkinter as tk
 import os
 import pygame
 from enum import Enum
-from mutagen import File
+from mutagen import File,id3
 from PIL import Image
-
+from pathlib import Path
 
 GEOMETRY = "800x500"
 TITLE = "Music Player"
@@ -95,6 +95,7 @@ class MusicPlayer(ctk.CTk):
         self.music.play()
         self.state = PlayerState.PLAYING
         self.control_bar.update_play_button(self.state)
+        self.control_bar.music_title_label.configure(text=self.get_song_title(self.playlist[index]))
         self.bottom_frame.start_progress_bar(self.get_song_length(self.playlist[index]))
 
     def get_song_length(self, file_path):
@@ -103,7 +104,18 @@ class MusicPlayer(ctk.CTk):
             return audio.info.length
         else:
             return 0
-
+    
+    def get_song_title(self,file_path):
+        try:
+            #NO TITLE METADATA
+            if not file_path.endswith(".mp3"):
+                return Path(file_path).stem
+            else:
+                audio = id3.ID3(file_path)
+                return audio["TIT2"].text[0]
+        except:
+            return ""    
+        
     def get_song_position(self):
         return pygame.mixer.music.get_pos() / 1000
 
@@ -167,18 +179,33 @@ class ControlBar(ctk.CTkFrame):
             command=self.play_previous,
             image=prev_icon
         )
+        self.music_title_label = ctk.CTkLabel(
+            self,
+            text="",
+            font=("roboto",12),
+            fg_color="#141414"
+        )
+        self.playback_label = ctk.CTkLabel(
+            self,
+            text="0:00",
+            font=("roboto",12),
+            fg_color="#141414"
+        )
 
         # PLACEMENT
-        self.grid_columnconfigure(0, weight=1)  
-        self.grid_columnconfigure(1, weight=0)  
+        self.grid_columnconfigure(0, weight=0)  
+        self.grid_columnconfigure(1, weight=1)  
         self.grid_columnconfigure(2, weight=0)  
         self.grid_columnconfigure(3, weight=0)  
-        self.grid_columnconfigure(4, weight=1)  
+        self.grid_columnconfigure(4, weight=0)  
+        self.grid_columnconfigure(5, weight=1)
 
         # PLACEMENT
-        self.prev_button.grid(row=0, column=1, sticky="nsew", padx=5, pady=10)
-        self.play_button.grid(row=0, column=2, sticky="nsew", padx=5, pady=10)
-        self.next_button.grid(row=0, column=3, sticky="nsew", padx=5, pady=10)
+        self.music_title_label.grid(row=0,column=0,sticky="w",padx=5,pady=10)
+        self.playback_label.grid(row=0,column=1,sticky="w",padx=5,pady=10)
+        self.prev_button.grid(row=0, column=2, sticky="nsew", padx=5, pady=10)
+        self.play_button.grid(row=0, column=3, sticky="nsew", padx=5, pady=10)
+        self.next_button.grid(row=0, column=4, sticky="nsew", padx=5, pady=10)
 
     def play_pause(self,event=None):
         if self.music_player.state == PlayerState.PLAYING:
@@ -233,19 +260,21 @@ class BottomFrame(ctk.CTkFrame):
         self.song_length = song_length
         self.update_progress_bar()
     
-    #PARTIALY WORKING
     def update_progress_bar(self):
         if self.music_player.state == PlayerState.PLAYING:
             song_position = self.music_player.get_song_position()
+            #GETS RATIO OF PROGRESS
             progress = song_position / self.song_length
             self.progress_bar.set(progress)
+            minutes = int(song_position // 60)
+            seconds = int(song_position % 60)
+            time_string = f"{minutes:02d}:{seconds:02d}"
+            self.music_player.control_bar.playback_label.configure(text=time_string)
             if song_position < self.song_length:
                 self.after(EVENT_INTERVAL, self.update_progress_bar)
         elif self.music_player.state == PlayerState.PAUSED:
-            # Keep updating the progress bar even in the paused state
             self.after(EVENT_INTERVAL, self.update_progress_bar)
         else:
-            # Stop updating the progress bar when the song is stopped
             self.progress_bar.set(0)
 
 
@@ -329,7 +358,8 @@ class TopBar(ctk.CTkFrame):
                 os.listdir(self.current_folder),
             ):
                 self.parent.playlist.append(file)
-                self.parent.playlist_frame.song_list.insert("end", f"• {file}")
+                
+                self.parent.playlist_frame.song_list.insert("end", f"• {Path(file).stem}")
 
 
 if __name__ == "__main__":
