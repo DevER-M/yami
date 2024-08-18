@@ -155,13 +155,16 @@ class ControlBar(ctk.CTkFrame):
         )
 
         # PLACEMENT
-        self.prev_button.grid(row=0, column=0, sticky="nsew")
-        self.play_button.grid(row=0, column=1, sticky="nsew")
-        self.next_button.grid(
-            row=0,
-            column=2,
-            sticky="nsew",
-        )
+        self.grid_columnconfigure(0, weight=1)  
+        self.grid_columnconfigure(1, weight=0)  
+        self.grid_columnconfigure(2, weight=0)  
+        self.grid_columnconfigure(3, weight=0)  
+        self.grid_columnconfigure(4, weight=1)  
+
+        # PLACEMENT
+        self.prev_button.grid(row=0, column=1, sticky="nsew", padx=5, pady=10)
+        self.play_button.grid(row=0, column=2, sticky="nsew", padx=5, pady=10)
+        self.next_button.grid(row=0, column=3, sticky="nsew", padx=5, pady=10)
 
     def play_pause(self,event=None):
         if self.music_player.state == PlayerState.PLAYING:
@@ -205,8 +208,9 @@ class BottomFrame(ctk.CTkFrame):
         #SETUP
         self.music_player = parent
         
-        self.progress_bar = ctk.CTkProgressBar(self)
+        self.progress_bar = ctk.CTkProgressBar(self,progress_color="#1f0469")
         self.progress_bar.pack(fill="x", expand=True)
+        self.progress_bar.set(0)
         
         self.pack(fill="x")#IMP
 
@@ -224,19 +228,16 @@ class BottomFrame(ctk.CTkFrame):
             if song_position < self.song_length:
                 self.after(EVENT_INTERVAL, self.update_progress_bar)
         elif self.music_player.state == PlayerState.PAUSED:
-            song_position = self.music_player.get_song_position()
-            progress = song_position / self.song_length
-            self.progress_bar.set(progress)
-            if song_position > self.song_length:
-                self.after(EVENT_INTERVAL,self.update_progress_bar)
+            # Keep updating the progress bar even in the paused state
+            self.after(EVENT_INTERVAL, self.update_progress_bar)
         else:
+            # Stop updating the progress bar when the song is stopped
             self.progress_bar.set(0)
-            self.after(EVENT_INTERVAL,self.update_progress_bar)
 
 
 class PlaylistFrame(ctk.CTkFrame):
     def __init__(self, parent: MusicPlayer):
-        super().__init__(parent)
+        super().__init__(parent,corner_radius=10,fg_color="#141414")
         self.parent = parent
 
         self.song_list = tk.Listbox(
@@ -244,8 +245,13 @@ class PlaylistFrame(ctk.CTkFrame):
             borderwidth=5, 
             activestyle="dotbox", 
             width=30, 
-            height=15, 
-            border=10
+            height=15,
+            relief="flat",
+            bd=10,
+            bg="#141414",
+            fg="#FFFFFF",
+            selectbackground="#1f0469",
+            font=("roboto",12)
         )
         self.song_list.grid(column=0, row=0, sticky="nesw")
 
@@ -253,11 +259,15 @@ class PlaylistFrame(ctk.CTkFrame):
         self.scrollbar.grid(column=0, row=0, sticky="nes")
 
         self.song_list.config(yscrollcommand=self.scrollbar.set)
-        self.song_list.bind("<<ListboxSelect>>", self.play)
+        self.song_list.bind("<Double-1>", self.play)
+        self.song_list.bind("<Return>",self.play)
 
     def play(self, event):
-        index = event.widget.curselection()[0]
-        self.parent.load_and_play_song(index)
+        try:
+            index = event.widget.curselection()[0]
+            self.parent.load_and_play_song(index)
+        except IndexError:
+            pass
 
 
 class TopBar(ctk.CTkFrame):
@@ -305,7 +315,7 @@ class TopBar(ctk.CTkFrame):
                 os.listdir(self.current_folder),
             ):
                 self.parent.playlist.append(file)
-                self.parent.playlist_frame.song_list.insert("end", file)
+                self.parent.playlist_frame.song_list.insert("end", f"• {file}")
 
 
 if __name__ == "__main__":
