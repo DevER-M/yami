@@ -7,8 +7,6 @@ from enum import Enum
 from mutagen import File,id3
 from PIL import Image
 from pathlib import Path
-from PIL import ImageTk
-from io import BytesIO
 import tempfile
 
 
@@ -95,18 +93,21 @@ class MusicPlayer(ctk.CTk):
         self.playlist_frame.song_list.select_set(self.playlist_index)
 
     def load_and_play_song(self, index):
+
+        #MUSIC
         self.music.unload()
         self.music.stop()
         self.music.load(self.playlist[index])
         self.music.play()
         self.state = PlayerState.PLAYING
-        self.control_bar.update_play_button(self.state)
+
+        #CHANGE INFO
         cover_image = self.get_album_cover(self.playlist[index])
-        
-        
         self.cover_art_frame.cover_art_label.configure(image=cover_image)
         
-        self.control_bar.music_title_label.configure(text=self.get_song_title(self.playlist[index]))
+        self.control_bar.set_music_title(self.get_song_title(self.playlist[index]))
+        self.control_bar.update_play_button(self.state)
+        
         self.bottom_frame.start_progress_bar(self.get_song_length(self.playlist[index]))
 
     def get_song_length(self, file_path):
@@ -128,26 +129,25 @@ class MusicPlayer(ctk.CTk):
             return ""
         
     def get_album_cover(self, file_path):
-        file_path = file_path
         if not file_path.endswith(".mp3"):
             return None
         else:
             try:
                 audio_file = id3.ID3(file_path)
                 cover_data = None
+                #APIC TAG FOR IMAGE DATA
                 for tag in audio_file.getall("APIC"):
                     if tag.mime == "image/jpeg" or tag.mime == "image/png":
                         cover_data = tag.data
                         break
                 if cover_data:
-                    # Save the cover data to a temporary file
+                    #TEMP STORE COVER
                     with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as temp_file:
                         temp_file.write(cover_data)
                         temp_path = temp_file.name
                     
-                    # Load the image using CTkImage
                     return ctk.CTkImage(Image.open(temp_path), size=(200, 200))
-                return None  # Return None if no cover found
+                return None
             except:
                 return None
 
@@ -180,13 +180,14 @@ class ControlBar(ctk.CTkFrame):
             next_icon,
             play_next_command
             ):
-        super().__init__(parent,corner_radius=10,fg_color="#141414")
+        super().__init__(parent,corner_radius=10,fg_color="#000000")
 
         # SETUP
         self.music_player = parent
         self.pause_icon = pause_icon
         self.play_icon = play_icon
         self.play_next_command = play_next_command
+        self.title_max_chars=20
 
         # WIDGETS
         self.play_button = ctk.CTkButton(
@@ -218,22 +219,23 @@ class ControlBar(ctk.CTkFrame):
             self,
             text="",
             font=("roboto",12),
-            fg_color="#141414"
+            fg_color="#000000",
+            width=20,
+            anchor="w",
         )
         self.playback_label = ctk.CTkLabel(
             self,
             text="0:00",
             font=("roboto",12),
-            fg_color="#141414"
+            fg_color="#000000"
         )
 
         # PLACEMENT
-        self.grid_columnconfigure(0, weight=0)  
-        self.grid_columnconfigure(1, weight=1)  
-        self.grid_columnconfigure(2, weight=0)  
-        self.grid_columnconfigure(3, weight=0)  
-        self.grid_columnconfigure(4, weight=0)  
-        self.grid_columnconfigure(5, weight=1)
+        self.grid_columnconfigure(0, weight=1)  # Fixed width for prev_button
+        self.grid_columnconfigure(1, weight=0)  # Fixed width for play_button
+        self.grid_columnconfigure(2, weight=0)  # Fixed width for next_button
+        self.grid_columnconfigure(3, weight=0)  # Flexible width for title label
+        self.grid_columnconfigure(4, weight=0)  # Fixed width for playback label
 
         # PLACEMENT
         self.music_title_label.grid(row=0,column=0,sticky="w",padx=5,pady=10)
@@ -275,6 +277,14 @@ class ControlBar(ctk.CTkFrame):
         self.music_player.playlist_frame.song_list.select_set(
             self.music_player.playlist_index
         )
+    
+    #TRUNCATOR
+    def set_music_title(self, title):
+        if len(title) > self.title_max_chars:
+            truncated_title = title[:self.title_max_chars - 3] + "..."
+        else:
+            truncated_title = title
+        self.music_title_label.configure(text=truncated_title)
 
 
 class BottomFrame(ctk.CTkFrame):
@@ -315,7 +325,7 @@ class BottomFrame(ctk.CTkFrame):
 
 class PlaylistFrame(ctk.CTkFrame):
     def __init__(self, parent: MusicPlayer):
-        super().__init__(parent,corner_radius=10,fg_color="#141414")
+        super().__init__(parent,corner_radius=10,fg_color="#000000")
         self.parent = parent
 
         self.song_list = tk.Listbox(
@@ -326,7 +336,7 @@ class PlaylistFrame(ctk.CTkFrame):
             height=15,
             relief="flat",
             bd=10,
-            bg="#141414",
+            bg="#000000",
             fg="#FFFFFF",
             selectbackground="#1f0469",
             font=("roboto",12)
@@ -350,7 +360,7 @@ class PlaylistFrame(ctk.CTkFrame):
 
 class TopBar(ctk.CTkFrame):
     def __init__(self, parent: MusicPlayer):
-        super().__init__(parent, fg_color="#141414")
+        super().__init__(parent, fg_color="#000000")
         
         self.parent = parent
         
@@ -406,7 +416,7 @@ class CoverArtFrame(ctk.CTkFrame):
             text="",
             width=200,
             height=200,
-            fg_color="#141414"
+            fg_color="#000000"
         )
         self.cover_art_label.grid(sticky="swen",padx=5)
 
