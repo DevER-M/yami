@@ -231,11 +231,11 @@ class ControlBar(ctk.CTkFrame):
         )
 
         # PLACEMENT
-        self.grid_columnconfigure(0, weight=1)  # Fixed width for prev_button
-        self.grid_columnconfigure(1, weight=0)  # Fixed width for play_button
-        self.grid_columnconfigure(2, weight=0)  # Fixed width for next_button
-        self.grid_columnconfigure(3, weight=0)  # Flexible width for title label
-        self.grid_columnconfigure(4, weight=0)  # Fixed width for playback label
+        self.grid_columnconfigure(0, weight=1)  
+        self.grid_columnconfigure(1, weight=0)  
+        self.grid_columnconfigure(2, weight=0)  
+        self.grid_columnconfigure(3, weight=0)  
+        self.grid_columnconfigure(4, weight=0)  
 
         # PLACEMENT
         self.music_title_label.grid(row=0,column=0,sticky="w",padx=5,pady=10)
