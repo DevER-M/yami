@@ -44,12 +44,12 @@ class MusicPlayer(ctk.CTk):
         self.initialize_pygame()
 
         # ICONS
-        self.play_icon = ctk.CTkImage(Image.open("play_arrow.png"))
-        self.pause_icon = ctk.CTkImage(Image.open("pause.png"))
-        self.prev_icon = ctk.CTkImage(Image.open("skip_prev.png"))
-        self.next_icon = ctk.CTkImage(Image.open("skip_next.png"))
-        self.folder_icon = ctk.CTkImage(Image.open("folder.png"))
-        self.music_icon = ctk.CTkImage(Image.open("music.png"))
+        self.play_icon = ctk.CTkImage(Image.open("pic/play_arrow.png"))
+        self.pause_icon = ctk.CTkImage(Image.open("pic/pause.png"))
+        self.prev_icon = ctk.CTkImage(Image.open("pic/skip_prev.png"))
+        self.next_icon = ctk.CTkImage(Image.open("pic/skip_next.png"))
+        self.folder_icon = ctk.CTkImage(Image.open("pic/folder.png"))
+        self.music_icon = ctk.CTkImage(Image.open("pic/music.png"))
 
         # FRAMES
         self.control_bar = ControlBar(
