@@ -12,4 +12,4 @@
 
 * `python player.py`
 
-![pic]("./pic/pic.png")
+![pic]("https://github.com/Code-Theft-Auto/tkinter-stuff/blob/main/pic/pic.png?raw=true")
