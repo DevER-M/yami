@@ -12,4 +12,5 @@
 
 * `python player.py`
 
-![pic]("https://github.com/Code-Theft-Auto/tkinter-stuff/blob/main/pic/pic.png?raw=true")
+## Screenshot
+![pic](pic/pic.png)
