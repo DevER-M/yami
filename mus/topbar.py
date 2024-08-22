@@ -1,9 +1,11 @@
 import customtkinter as ctk
-from tkinter import filedialog
+from tkinter import filedialog,simpledialog
 import tkinter as tk
 import os
 from pathlib import Path
 from mus.util import SUPPORTED_FORMATS
+from spotdl import Spotdl
+import asyncio
 
 
 class TopBar(ctk.CTkFrame):
@@ -22,7 +24,12 @@ class TopBar(ctk.CTkFrame):
             image=folder_icon,
         )
         self.ytdl_placeholder = ctk.CTkButton(
-            self, text="Download", font=("roboto", 15), width=70, image=music_icon
+            self, 
+            text="Download", 
+            font=("roboto", 15), 
+            width=70, 
+            image=music_icon,
+            command=self.prompt_download
         )
 
         # WIDGET PLACEMENT
@@ -54,3 +61,23 @@ class TopBar(ctk.CTkFrame):
                 self.parent.playlist_frame.song_list.insert(
                     "end", f"• {Path(file).stem}"
                 )
+    
+    def prompt_download(self):
+        song_url = simpledialog.askstring("Download Music", "Enter the URL of the song:")
+        if song_url:
+            print("e")
+            self.parent.loop.create_task(self.download_song(song_url))
+    
+    async def download_song(self, song_url):
+        # Create a Spotdl object
+        print("eh")
+        spotdl = Spotdl("5f573c9620494bae87890c0f08a60293","212476d9b0f3472eaa762d90b19b0ba8")
+        
+        # Run the download process asynchronously
+        song,path = await asyncio.to_thread(spotdl.download, [song_url])
+        print(song)
+        # Optional: Add the downloaded song to the playlist
+        downloaded_song_path = os.path.join(self.current_folder, f"{song.name}.mp3")
+        if os.path.exists(downloaded_song_path):
+            self.parent.playlist.append(downloaded_song_path)
+            self.parent.playlist_frame.song_list.insert("end", f"• {Path(downloaded_song_path).stem}")
