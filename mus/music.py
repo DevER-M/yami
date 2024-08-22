@@ -6,6 +6,7 @@ from mus.util import GEOMETRY, TITLE, PlayerState
 import tkinter as tk
 import tempfile
 import pygame
+
 from mus.topbar import TopBar
 from mus.playlist import PlaylistFrame
 from mus.control import ControlBar

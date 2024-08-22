@@ -1,3 +1,3 @@
-from mus import MusicPlayer
+from mus.music import MusicPlayer
 app = MusicPlayer()
 app.mainloop()

@@ -5,3 +5,4 @@ MUS
 b.py
 a.py
 __pycache__
+*/__pycache__
