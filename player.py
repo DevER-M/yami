@@ -25,7 +25,6 @@ class PlayerState(Enum):
 
 ctk.set_default_color_theme("theme.json")
 
-
 class MusicPlayer(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -36,7 +35,7 @@ class MusicPlayer(ctk.CTk):
 
         # STATE
         self.playlist = []
-        self.state = PlayerState.STOPPED
+        self.STATE = PlayerState.STOPPED
         self.current_folder = ""
         self.playlist_index = 0
 
@@ -101,14 +100,15 @@ class MusicPlayer(ctk.CTk):
         self.music.stop()
         self.music.load(self.playlist[index])
         self.music.play()
-        self.state = PlayerState.PLAYING
+        self.STATE = PlayerState.PLAYING
+        self.playlist_index=index
 
         #CHANGE INFO
         cover_image = self.get_album_cover(self.playlist[index])
         self.cover_art_frame.cover_art_label.configure(image=cover_image)
         
         self.control_bar.set_music_title(self.get_song_title(self.playlist[index]))
-        self.control_bar.update_play_button(self.state)
+        self.control_bar.update_play_button(self.STATE)
         
         self.bottom_frame.start_progress_bar(self.get_song_length(self.playlist[index]))
 
@@ -251,12 +251,12 @@ class ControlBar(ctk.CTkFrame):
         self.next_button.grid(row=0, column=4, sticky="nsew", padx=5, pady=10)
 
     def play_pause(self,event=None):
-        if self.music_player.state == PlayerState.PLAYING:
+        if self.music_player.STATE == PlayerState.PLAYING:
             self.music_player.music.pause()
-            self.music_player.state = PlayerState.PAUSED
+            self.music_player.STATE= PlayerState.PAUSED
         else:
             self.music_player.music.unpause()
-            self.music_player.state = PlayerState.PLAYING
+            self.music_player.STATE = PlayerState.PLAYING
         self.update_play_button(self.music_player.state)
 
     def update_play_button(self, state):
@@ -312,7 +312,7 @@ class BottomFrame(ctk.CTkFrame):
         self.update_progress_bar()
     
     def update_progress_bar(self):
-        if self.music_player.state == PlayerState.PLAYING:
+        if self.music_player.STATE == PlayerState.PLAYING:
             song_position = self.music_player.get_song_position()
             #GETS RATIO OF PROGRESS
             progress = song_position / self.song_length
@@ -323,7 +323,7 @@ class BottomFrame(ctk.CTkFrame):
             self.music_player.control_bar.playback_label.configure(text=time_string)
             if song_position < self.song_length:
                 self.after(EVENT_INTERVAL, self.update_progress_bar)
-        elif self.music_player.state == PlayerState.PAUSED:
+        elif self.music_player.STATE == PlayerState.PAUSED:
             self.after(EVENT_INTERVAL, self.update_progress_bar)
         else:
             self.progress_bar.set(0)
