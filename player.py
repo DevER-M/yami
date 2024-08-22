@@ -70,7 +70,6 @@ class MusicPlayer(ctk.CTk):
         self.bind("<F8>", self.control_bar.play_previous)
         self.bind("<F9>", self.control_bar.play_pause)
         self.bind("<space>", self.control_bar.play_pause)
-        #self.after(100, self.check_for_events)
 
         # WIDGET PLACEMENT
         self.topbar.pack(side=tk.TOP, fill=tk.X)
@@ -177,7 +176,6 @@ class MusicPlayer(ctk.CTk):
         for event in pygame.event.get():
             if event.type == pygame.USEREVENT:
                 self.play_next_song()
-        #self.after(EVENT_INTERVAL, self.check_for_events)
 
 
 class ControlBar(ctk.CTkFrame):
@@ -197,7 +195,7 @@ class ControlBar(ctk.CTkFrame):
         self.pause_icon = pause_icon
         self.play_icon = play_icon
         self.play_next_command = play_next_command
-        self.title_max_chars = 20
+        self.title_max_chars = 40
 
         # WIDGETS
         self.play_button = ctk.CTkButton(
