@@ -1,5 +1,6 @@
 import customtkinter as ctk
-from util import PlayerState,EVENT_INTERVAL
+from mus.util import PlayerState, EVENT_INTERVAL
+
 
 class BottomFrame(ctk.CTkFrame):
     def __init__(self, parent):
@@ -29,14 +30,14 @@ class BottomFrame(ctk.CTkFrame):
             minutes = int(song_position // 60)
             seconds = int(song_position % 60)
             time_string = f"{minutes:02d}:{seconds:02d}"
-            
+
             self.music_player.control_bar.playback_label.configure(text=time_string)
-            
+
             if song_position < self.song_length:
                 self.after(EVENT_INTERVAL, self.update_progress_bar)
-            
+
             self.music_player.check_for_events()
-        
+
         elif self.music_player.STATE == PlayerState.PAUSED:
             self.after(EVENT_INTERVAL, self.update_progress_bar)
         else:

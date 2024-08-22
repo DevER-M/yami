@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from util import BUTTON_WIDTH,PlayerState
+from mus.util import BUTTON_WIDTH, PlayerState
 import tkinter as tk
 
 

@@ -3,7 +3,7 @@ from tkinter import filedialog
 import tkinter as tk
 import os
 from pathlib import Path
-from util import SUPPORTED_FORMATS
+from mus.util import SUPPORTED_FORMATS
 
 
 class TopBar(ctk.CTkFrame):

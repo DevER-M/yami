@@ -2,21 +2,21 @@ from mutagen import File, id3
 import customtkinter as ctk
 from pathlib import Path
 from PIL import Image
-from util import GEOMETRY,TITLE,PlayerState,EVENT_INTERVAL
+from mus.util import GEOMETRY, TITLE, PlayerState
 import tkinter as tk
 import tempfile
 import pygame
-from topbar import TopBar
-from playlist import PlaylistFrame
-from control import ControlBar
-from cover_art import CoverArtFrame
-from progress import BottomFrame
+from mus.topbar import TopBar
+from mus.playlist import PlaylistFrame
+from mus.control import ControlBar
+from mus.cover_art import CoverArtFrame
+from mus.progress import BottomFrame
 
 ctk.set_default_color_theme("theme.json")
 
 
 class MusicPlayer(ctk.CTk):
-    def __init__(self:ctk.CTk):
+    def __init__(self: ctk.CTk):
         super().__init__()
 
         # CONFIG
@@ -36,11 +36,7 @@ class MusicPlayer(ctk.CTk):
         self.setup_icons()
 
         # FRAMES
-        self.topbar = TopBar(
-            self, 
-            self.folder_icon,
-            self.music_icon
-        )
+        self.topbar = TopBar(self, self.folder_icon, self.music_icon)
         self.control_bar = ControlBar(
             self,
             self.pause_icon,
@@ -141,7 +137,8 @@ class MusicPlayer(ctk.CTk):
                 return None
             except:
                 return None
-    #WIP
+
+    # WIP
     def get_artist(self, filepath):
         pass
 
@@ -161,7 +158,7 @@ class MusicPlayer(ctk.CTk):
         for event in pygame.event.get():
             if event.type == pygame.USEREVENT:
                 self.play_next_song()
-    
+
     def setup_icons(self):
         self.play_icon = ctk.CTkImage(Image.open("pic/play_arrow.png"))
         self.pause_icon = ctk.CTkImage(Image.open("pic/pause.png"))
@@ -169,12 +166,13 @@ class MusicPlayer(ctk.CTk):
         self.next_icon = ctk.CTkImage(Image.open("pic/skip_next.png"))
         self.folder_icon = ctk.CTkImage(Image.open("pic/folder.png"))
         self.music_icon = ctk.CTkImage(Image.open("pic/music.png"))
-    
+
     def setup_bindings(self):
         self.bind("<F10>", self.play_next_song)
         self.bind("<F8>", self.control_bar.play_previous)
         self.bind("<F9>", self.control_bar.play_pause)
         self.bind("<space>", self.control_bar.play_pause)
+
 
 if __name__ == "__main__":
     music_player = MusicPlayer()
