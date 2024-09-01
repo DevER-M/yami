@@ -81,7 +81,7 @@ class ControlBar(ctk.CTkFrame):
         else:
             self.music_player.music.unpause()
             self.music_player.STATE = PlayerState.PLAYING
-        self.update_play_button(self.music_player.state)
+        self.update_play_button(self.music_player.STATE)
 
     def update_play_button(self, state):
         if state == PlayerState.PLAYING:
