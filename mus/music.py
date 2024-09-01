@@ -29,9 +29,9 @@ class MusicPlayer(ctk.CTk):
         self.STATE = PlayerState.STOPPED
         self.current_folder = ""
         self.playlist_index = 0
-        self.loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(self.loop)
-        self.update_loop()
+        #self.loop = asyncio.new_event_loop()
+        #asyncio.set_event_loop(self.loop)
+        #self.update_loop()
 
         # SETUP PYGAME
         self.initialize_pygame()
