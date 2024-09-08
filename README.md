@@ -10,7 +10,7 @@
 
 * `pip install -r requirements.txt`
 
-* `python player.py`
+* `python run.py`
 
 ## Screenshot
 ![pic](pic/pic.png)
