@@ -1,8 +1,8 @@
 # How to install
 
-*    `git clone https://github.com/Code-Theft-Auto/tkinter-stuff.git`
+*    `git clone https://github.com/Code-Theft-Auto/yami.git`
 
-*    `cd tkinter-stuff`
+*    `cd yami`
 
 *    `python -m venv .venv`
 
