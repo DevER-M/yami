@@ -6,6 +6,7 @@ from pathlib import Path
 from mus.util import SUPPORTED_FORMATS
 from spotdl import Spotdl
 import asyncio
+from async_tkinter_loop import async_handler
 
 
 class TopBar(ctk.CTkFrame):
@@ -68,8 +69,8 @@ class TopBar(ctk.CTkFrame):
         )
         if song_url:
             print("e")
-            self.parent.loop.create_task(self.download_song(song_url))
-
+            self.download_song(song_url)
+    @async_handler
     async def download_song(self, song_url):
         # Create a Spotdl object
         print("eh")
@@ -78,7 +79,7 @@ class TopBar(ctk.CTkFrame):
         )
 
         # Run the download process asynchronously
-        song, path = await self.parent.loop.create_task(spotdl.download(spotdl.search([song_url])[0]))
+        song, path = spotdl.download(spotdl.search([song_url])[0])
         print(song)
         # Optional: Add the downloaded song to the playlist
         downloaded_song_path = os.path.join(self.current_folder, f"{song.name}.mp3")

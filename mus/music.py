@@ -2,11 +2,10 @@ from mutagen import File, id3
 import customtkinter as ctk
 from pathlib import Path
 from PIL import Image
-from mus.util import GEOMETRY, TITLE, PlayerState
+from mus.util import GEOMETRY, TITLE, PlayerState,EVENT_INTERVAL
 import tkinter as tk
 import tempfile
 import pygame
-import asyncio
 from mus.topbar import TopBar
 from mus.playlist import PlaylistFrame
 from mus.control import ControlBar
@@ -17,7 +16,7 @@ ctk.set_default_color_theme("theme.json")
 
 
 class MusicPlayer(ctk.CTk):
-    def __init__(self: ctk.CTk,loop):
+    def __init__(self: ctk.CTk):
         super().__init__()
 
         # CONFIG
@@ -29,7 +28,6 @@ class MusicPlayer(ctk.CTk):
         self.STATE = PlayerState.STOPPED
         self.current_folder = ""
         self.playlist_index = 0
-        self.loop = loop
 
         # SETUP PYGAME
         self.initialize_pygame()
@@ -60,6 +58,33 @@ class MusicPlayer(ctk.CTk):
         self.control_bar.pack(side=tk.BOTTOM, fill=tk.X)
         self.playlist_frame.pack(side=tk.RIGHT)
         self.cover_art_frame.pack(side=tk.LEFT)
+        
+        self.after(EVENT_INTERVAL,self.update)
+
+
+    def update(self):
+        if self.STATE == PlayerState.PLAYING:
+            song_position = self.get_song_position()
+
+            # GETS RATIO OF PROGRESS
+            progress = song_position / self.song_length
+            self.bottom_frame.progress_bar.set(progress)
+            minutes = int(song_position // 60)
+            seconds = int(song_position % 60)
+            time_string = f"{minutes:02d}:{seconds:02d}"
+
+            self.control_bar.playback_label.configure(text=time_string)
+
+            if song_position < self.song_length:
+                self.after(EVENT_INTERVAL, self.update)
+
+            self.check_for_events()
+
+        elif self.STATE == PlayerState.PAUSED:
+            self.after(EVENT_INTERVAL, self.update)
+        else:
+            self.bottom_frame.progress_bar.set(0)
+
 
     def load_and_play_song(self, index):
 
@@ -175,10 +200,6 @@ class MusicPlayer(ctk.CTk):
         self.bind("<F9>", self.control_bar.play_pause)
         self.bind("<space>", self.control_bar.play_pause)
 
-    def update_loop(self):
-        self.loop.call_soon(self.loop.stop)
-        self.loop.run_forever()
-        self.after(100, self.update_loop)
 
 
 if __name__ == "__main__":

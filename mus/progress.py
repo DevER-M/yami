@@ -17,29 +17,6 @@ class BottomFrame(ctk.CTkFrame):
 
     def start_progress_bar(self, song_length):
         self.progress_bar.set(0)
-        self.song_length = song_length
-        self.update_progress_bar()
+        self.music_player.song_length = song_length
+        self.music_player.update()
 
-    def update_progress_bar(self):
-        self.music_player.update_loop()
-        if self.music_player.STATE == PlayerState.PLAYING:
-            song_position = self.music_player.get_song_position()
-
-            # GETS RATIO OF PROGRESS
-            progress = song_position / self.song_length
-            self.progress_bar.set(progress)
-            minutes = int(song_position // 60)
-            seconds = int(song_position % 60)
-            time_string = f"{minutes:02d}:{seconds:02d}"
-
-            self.music_player.control_bar.playback_label.configure(text=time_string)
-
-            if song_position < self.song_length:
-                self.after(EVENT_INTERVAL, self.update_progress_bar)
-
-            self.music_player.check_for_events()
-
-        elif self.music_player.STATE == PlayerState.PAUSED:
-            self.after(EVENT_INTERVAL, self.update_progress_bar)
-        else:
-            self.progress_bar.set(0)
