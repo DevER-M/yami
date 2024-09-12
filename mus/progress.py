@@ -21,6 +21,7 @@ class BottomFrame(ctk.CTkFrame):
         self.update_progress_bar()
 
     def update_progress_bar(self):
+        self.music_player.update_loop()
         if self.music_player.STATE == PlayerState.PLAYING:
             song_position = self.music_player.get_song_position()
 

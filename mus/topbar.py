@@ -78,7 +78,7 @@ class TopBar(ctk.CTkFrame):
         )
 
         # Run the download process asynchronously
-        song, path = await asyncio.to_thread(spotdl.download, [song_url])
+        song, path = await self.parent.loop.create_task(spotdl.download(spotdl.search([song_url])[0]))
         print(song)
         # Optional: Add the downloaded song to the playlist
         downloaded_song_path = os.path.join(self.current_folder, f"{song.name}.mp3")
