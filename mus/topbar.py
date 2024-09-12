@@ -13,6 +13,9 @@ class TopBar(ctk.CTkFrame):
         super().__init__(parent, fg_color="#121212")
 
         self.parent = parent
+        self.sptdl = spotdl.Spotdl(
+            "5f573c9620494bae87890c0f08a60293", "212476d9b0f3472eaa762d90b19b0ba8"
+        )
 
         # WIDGETS
         self.open_folder = ctk.CTkButton(
@@ -68,27 +71,18 @@ class TopBar(ctk.CTkFrame):
         )
         if song_url:
             print("e")
-            self.parent.loop.create_task(self.download_song(song_url))
+            asyncio.create_task(self.download_song(song_url))
 
     async def download_song(self, song_url):
-        # Create the Spotdl object
-        sptdl = spotdl.Spotdl(
-            "5f573c9620494bae87890c0f08a60293", "212476d9b0f3472eaa762d90b19b0ba8"
-        )
+        print("eh")
+        song,path = asyncio.create_task(self.sptdl.download,(self.sptdl.search([song_url])[0]))
 
-        # Run the blocking search in a background thread
-        song = await asyncio.to_thread(sptdl.search, [song_url])
 
-        if song:  # Check if song was found
-            # Run the blocking download in a background thread
-            download_path = await asyncio.to_thread(sptdl.download, song[0])
+        downloaded_song_path = os.path.join(self.current_folder, f"{song[0].name}.mp3")
 
-            # Handle after download completes
-            downloaded_song_path = os.path.join(self.current_folder, f"{song[0].name}.mp3")
-
-            if os.path.exists(downloaded_song_path):
-                # Add the downloaded song to your playlist
-                self.parent.playlist.append(downloaded_song_path)
-                self.parent.playlist_frame.song_list.insert(
-                    "end", f"• {Path(downloaded_song_path).stem}"
-                )
+        if os.path.exists(downloaded_song_path):
+            # Add the downloaded song to your playlist
+            self.parent.playlist.append(downloaded_song_path)
+            self.parent.playlist_frame.song_list.insert(
+                "end", f"• {Path(downloaded_song_path).stem}"
+            )

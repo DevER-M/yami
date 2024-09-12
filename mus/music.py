@@ -6,6 +6,7 @@ from mus.util import GEOMETRY, TITLE, PlayerState, EVENT_INTERVAL
 import tkinter as tk
 import tempfile
 import pygame
+import asyncio
 from mus.topbar import TopBar
 from mus.playlist import PlaylistFrame
 from mus.control import ControlBar
@@ -16,7 +17,7 @@ ctk.set_default_color_theme("theme.json")
 
 
 class MusicPlayer(ctk.CTk):
-    def __init__(self: ctk.CTk,loop):
+    def __init__(self: ctk.CTk,loop=None):
         super().__init__()
 
         # CONFIG
@@ -28,7 +29,7 @@ class MusicPlayer(ctk.CTk):
         self.STATE = PlayerState.STOPPED
         self.current_folder = ""
         self.playlist_index = 0
-        self.loop = loop
+        self.loop = loop or asyncio.get_event_loop()
 
         # SETUP PYGAME
         self.initialize_pygame()
@@ -60,6 +61,7 @@ class MusicPlayer(ctk.CTk):
         self.playlist_frame.pack(side=tk.RIGHT)
         self.cover_art_frame.pack(side=tk.LEFT)
 
+        # Start asyncio loop integration with tkinter
         self.after(EVENT_INTERVAL, self.update)
 
     def update(self):
