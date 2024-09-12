@@ -4,9 +4,8 @@ import tkinter as tk
 import os
 from pathlib import Path
 from mus.util import SUPPORTED_FORMATS
-from spotdl import Spotdl
 import asyncio
-from async_tkinter_loop import async_handler
+import spotdl
 
 
 class TopBar(ctk.CTkFrame):
@@ -69,22 +68,27 @@ class TopBar(ctk.CTkFrame):
         )
         if song_url:
             print("e")
-            self.download_song(song_url)
-    @async_handler
+            self.parent.loop.create_task(self.download_song(song_url))
+
     async def download_song(self, song_url):
-        # Create a Spotdl object
-        print("eh")
-        spotdl = Spotdl(
+        # Create the Spotdl object
+        sptdl = spotdl.Spotdl(
             "5f573c9620494bae87890c0f08a60293", "212476d9b0f3472eaa762d90b19b0ba8"
         )
 
-        # Run the download process asynchronously
-        song, path = spotdl.download(spotdl.search([song_url])[0])
-        print(song)
-        # Optional: Add the downloaded song to the playlist
-        downloaded_song_path = os.path.join(self.current_folder, f"{song.name}.mp3")
-        if os.path.exists(downloaded_song_path):
-            self.parent.playlist.append(downloaded_song_path)
-            self.parent.playlist_frame.song_list.insert(
-                "end", f"• {Path(downloaded_song_path).stem}"
-            )
+        # Run the blocking search in a background thread
+        song = await asyncio.to_thread(sptdl.search, [song_url])
+
+        if song:  # Check if song was found
+            # Run the blocking download in a background thread
+            download_path = await asyncio.to_thread(sptdl.download, song[0])
+
+            # Handle after download completes
+            downloaded_song_path = os.path.join(self.current_folder, f"{song[0].name}.mp3")
+
+            if os.path.exists(downloaded_song_path):
+                # Add the downloaded song to your playlist
+                self.parent.playlist.append(downloaded_song_path)
+                self.parent.playlist_frame.song_list.insert(
+                    "end", f"• {Path(downloaded_song_path).stem}"
+                )
