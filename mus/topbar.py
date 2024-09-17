@@ -6,6 +6,8 @@ from pathlib import Path
 from mus.util import SUPPORTED_FORMATS
 import asyncio
 import spotdl
+import nest_asyncio
+
 
 
 class TopBar(ctk.CTkFrame):
@@ -13,8 +15,9 @@ class TopBar(ctk.CTkFrame):
         super().__init__(parent, fg_color="#121212")
 
         self.parent = parent
+        nest_asyncio.apply()
         self.sptdl = spotdl.Spotdl(
-            "5f573c9620494bae87890c0f08a60293", "212476d9b0f3472eaa762d90b19b0ba8"
+            "5f573c9620494bae87890c0f08a60293", "212476d9b0f3472eaa762d90b19b0ba8",#loop=self.parent.loop
         )
 
         # WIDGETS
@@ -71,18 +74,16 @@ class TopBar(ctk.CTkFrame):
         )
         if song_url:
             print("e")
-            asyncio.create_task(self.download_song(song_url))
+            self.download_song(song_url)
 
-    async def download_song(self, song_url):
+    def download_song(self, song_url):
         print("eh")
-        song,path = asyncio.create_task(self.sptdl.download,(self.sptdl.search([song_url])[0]))
+        song,path = self.sptdl.download(self.sptdl.search([song_url])[0])
 
-
-        downloaded_song_path = os.path.join(self.current_folder, f"{song[0].name}.mp3")
-
-        if os.path.exists(downloaded_song_path):
-            # Add the downloaded song to your playlist
-            self.parent.playlist.append(downloaded_song_path)
-            self.parent.playlist_frame.song_list.insert(
-                "end", f"• {Path(downloaded_song_path).stem}"
-            )
+        downloaded_song_path = os.path.join(self.parent.current_folder, f"{song.display_name}.mp3")
+        print(downloaded_song_path)
+        
+        self.parent.playlist.append(downloaded_song_path)
+        self.parent.playlist_frame.song_list.insert(
+            "end", f"• {Path(downloaded_song_path).stem}"
+        )
