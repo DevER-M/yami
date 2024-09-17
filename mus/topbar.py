@@ -21,8 +21,7 @@ class TopBar(ctk.CTkFrame):
         '''self.sptdl = spotdl.Spotdl(
             "5f573c9620494bae87890c0f08a60293", "212476d9b0f3472eaa762d90b19b0ba8",#loop=self.parent.loop
         )'''
-        spotdl.SpotifyClient.init("5f573c9620494bae87890c0f08a60293", "212476d9b0f3472eaa762d90b19b0ba8")
-
+        
         # WIDGETS
         self.open_folder = ctk.CTkButton(
             self,
@@ -80,9 +79,9 @@ class TopBar(ctk.CTkFrame):
             self.parent.loop.create_task(self.download_song(song_url))
 
     async def download_song(self, song_url):
-        dl = spotdl.Downloader()
+        
         song,path = await asyncio.to_thread(
-                dl.search_and_download,
+                self.parent.downloader.search_and_download,
                 spotdl.utils.search.get_simple_songs([song_url])[0]
         )
         downloaded_song_path = os.path.join(self.parent.current_folder, f"{song.display_name}.mp3")

@@ -12,6 +12,7 @@ from mus.control import ControlBar
 from mus.cover_art import CoverArtFrame
 from mus.progress import BottomFrame
 import asyncio
+import spotdl
 
 ctk.set_default_color_theme("theme.json")
 
@@ -30,6 +31,12 @@ class MusicPlayer(ctk.CTk):
         self.current_folder = ""
         self.playlist_index = 0
         self.loop = loop if loop is not None else asyncio.new_event_loop()
+        self.downloader = spotdl.Downloader(spotdl.DownloaderOptions(threads=4))
+        spotdl.SpotifyClient.init(
+            "5f573c9620494bae87890c0f08a60293", 
+            "212476d9b0f3472eaa762d90b19b0ba8"
+            )
+
 
 
         # SETUP PYGAME
@@ -66,6 +73,7 @@ class MusicPlayer(ctk.CTk):
         self.after(EVENT_INTERVAL, self.update)
 
     def update(self):
+        self.update_idletasks()
         self.update_loop()
         if self.STATE == PlayerState.PLAYING:
             song_position = self.get_song_position()
@@ -206,7 +214,7 @@ class MusicPlayer(ctk.CTk):
     def update_loop(self):
         self.loop.call_soon(self.loop.stop)
         self.loop.run_forever()
-        self.after(100, self.update_loop)
+        self.after(1000, self.update_loop)
 
     
 
