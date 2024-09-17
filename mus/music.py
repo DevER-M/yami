@@ -98,23 +98,25 @@ class MusicPlayer(ctk.CTk):
             self.bottom_frame.progress_bar.set(0)
 
     def load_and_play_song(self, index):
+        try:
+            # MUSIC
+            self.music.unload()
+            self.music.stop()
+            self.music.load(self.playlist[index])
+            self.music.play()
+            self.STATE = PlayerState.PLAYING
+            self.playlist_index = index
 
-        # MUSIC
-        self.music.unload()
-        self.music.stop()
-        self.music.load(self.playlist[index])
-        self.music.play()
-        self.STATE = PlayerState.PLAYING
-        self.playlist_index = index
+            # CHANGE INFO
+            cover_image = self.get_album_cover(self.playlist[index])
+            self.cover_art_frame.cover_art_label.configure(image=cover_image)
 
-        # CHANGE INFO
-        cover_image = self.get_album_cover(self.playlist[index])
-        self.cover_art_frame.cover_art_label.configure(image=cover_image)
+            self.control_bar.set_music_title(self.get_song_title(self.playlist[index]))
+            self.control_bar.update_play_button(self.STATE)
 
-        self.control_bar.set_music_title(self.get_song_title(self.playlist[index]))
-        self.control_bar.update_play_button(self.STATE)
-
-        self.bottom_frame.start_progress_bar(self.get_song_length(self.playlist[index]))
+            self.bottom_frame.start_progress_bar(self.get_song_length(self.playlist[index]))
+        except:
+            self.play_next_song()
 
     def play_next_song(self, event=None):
         if not self.playlist:
