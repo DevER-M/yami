@@ -4,7 +4,6 @@ import tkinter as tk
 import os
 from pathlib import Path
 from mus.util import SUPPORTED_FORMATS
-import asyncio
 import spotdl
 import nest_asyncio
 
