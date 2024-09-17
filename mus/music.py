@@ -11,12 +11,13 @@ from mus.playlist import PlaylistFrame
 from mus.control import ControlBar
 from mus.cover_art import CoverArtFrame
 from mus.progress import BottomFrame
+import asyncio
 
 ctk.set_default_color_theme("theme.json")
 
 
 class MusicPlayer(ctk.CTk):
-    def __init__(self: ctk.CTk):
+    def __init__(self: ctk.CTk,loop=None):
         super().__init__()
 
         # CONFIG
@@ -28,6 +29,8 @@ class MusicPlayer(ctk.CTk):
         self.STATE = PlayerState.STOPPED
         self.current_folder = ""
         self.playlist_index = 0
+        self.loop = loop if loop is not None else asyncio.new_event_loop()
+
 
         # SETUP PYGAME
         self.initialize_pygame()
@@ -63,6 +66,7 @@ class MusicPlayer(ctk.CTk):
         self.after(EVENT_INTERVAL, self.update)
 
     def update(self):
+        self.update_loop()
         if self.STATE == PlayerState.PLAYING:
             song_position = self.get_song_position()
 
@@ -198,6 +202,11 @@ class MusicPlayer(ctk.CTk):
         self.bind("<F8>", self.control_bar.play_previous)
         self.bind("<F9>", self.control_bar.play_pause)
         self.bind("<space>", self.control_bar.play_pause)
+    
+    def update_loop(self):
+        self.loop.call_soon(self.loop.stop)
+        self.loop.run_forever()
+        self.after(100, self.update_loop)
 
     
 

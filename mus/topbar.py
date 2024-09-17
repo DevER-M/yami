@@ -3,9 +3,12 @@ from tkinter import filedialog, simpledialog
 import tkinter as tk
 import os
 from pathlib import Path
+
+import spotdl.utils
+import spotdl.utils.search
 from mus.util import SUPPORTED_FORMATS
 import spotdl
-import nest_asyncio
+import asyncio
 
 
 
@@ -14,10 +17,11 @@ class TopBar(ctk.CTkFrame):
         super().__init__(parent, fg_color="#121212")
 
         self.parent = parent
-        nest_asyncio.apply()
-        self.sptdl = spotdl.Spotdl(
+        
+        '''self.sptdl = spotdl.Spotdl(
             "5f573c9620494bae87890c0f08a60293", "212476d9b0f3472eaa762d90b19b0ba8",#loop=self.parent.loop
-        )
+        )'''
+        spotdl.SpotifyClient.init("5f573c9620494bae87890c0f08a60293", "212476d9b0f3472eaa762d90b19b0ba8")
 
         # WIDGETS
         self.open_folder = ctk.CTkButton(
@@ -69,16 +73,18 @@ class TopBar(ctk.CTkFrame):
 
     def prompt_download(self):
         song_url = simpledialog.askstring(
-            "Download Music", "Enter the URL of the song:"
+            "Download Music",
+            "Enter the URL of the song:"
         )
         if song_url:
-            print("e")
-            self.download_song(song_url)
+            self.parent.loop.create_task(self.download_song(song_url))
 
-    def download_song(self, song_url):
-        print("eh")
-        song,path = self.sptdl.download(self.sptdl.search([song_url])[0])
-
+    async def download_song(self, song_url):
+        dl = spotdl.Downloader()
+        song,path = await asyncio.to_thread(
+                dl.search_and_download,
+                spotdl.utils.search.get_simple_songs([song_url])[0]
+        )
         downloaded_song_path = os.path.join(self.parent.current_folder, f"{song.display_name}.mp3")
         print(downloaded_song_path)
         
