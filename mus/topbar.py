@@ -76,14 +76,18 @@ class TopBar(ctk.CTkFrame):
             "Enter the URL of the song:"
         )
         if song_url:
+            print("gonna")
             self.parent.loop.create_task(self.download_song(song_url))
+            print("ran")
 
     async def download_song(self, song_url):
-        
-        song,path = await asyncio.to_thread(
+        print(song_url)
+        song,path = await asyncio.ensure_future(asyncio.to_thread(
                 self.parent.downloader.search_and_download,
                 spotdl.utils.search.get_simple_songs([song_url])[0]
-        )
+        ))
+        await asyncio.sleep(0)
+        print("after await")
         downloaded_song_path = os.path.join(self.parent.current_folder, f"{song.display_name}.mp3")
         print(downloaded_song_path)
         
