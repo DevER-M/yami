@@ -18,7 +18,7 @@ ctk.set_default_color_theme("theme.json")
 
 
 class MusicPlayer(ctk.CTk):
-    def __init__(self: ctk.CTk,loop=None):
+    def __init__(self: ctk.CTk, loop=None):
         super().__init__()
 
         # CONFIG
@@ -31,13 +31,13 @@ class MusicPlayer(ctk.CTk):
         self.current_folder = ""
         self.playlist_index = 0
         self.loop = loop if loop is not None else asyncio.new_event_loop()
-        self.downloader = spotdl.Downloader(spotdl.DownloaderOptions(threads=4))
+        self.downloader = spotdl.Downloader(
+            spotdl.DownloaderOptions(threads=4)
+        )
         spotdl.SpotifyClient.init(
-            "5f573c9620494bae87890c0f08a60293", 
-            "212476d9b0f3472eaa762d90b19b0ba8"
-            )
-
-
+            "5f573c9620494bae87890c0f08a60293",
+            "212476d9b0f3472eaa762d90b19b0ba8",
+        )
 
         # SETUP PYGAME
         self.initialize_pygame()
@@ -111,12 +111,16 @@ class MusicPlayer(ctk.CTk):
             cover_image = self.get_album_cover(self.playlist[index])
             self.cover_art_frame.cover_art_label.configure(image=cover_image)
 
-            self.control_bar.set_music_title(self.get_song_title(self.playlist[index]))
+            self.control_bar.set_music_title(
+                self.get_song_title(self.playlist[index])
+            )
             self.control_bar.update_play_button(self.STATE)
 
-            self.bottom_frame.start_progress_bar(self.get_song_length(self.playlist[index]))
-        except:
-            self.play_next_song()
+            self.bottom_frame.start_progress_bar(
+                self.get_song_length(self.playlist[index])
+            )
+        except Exception as e:
+            print(e)
 
     def play_next_song(self, event=None):
         if not self.playlist:
@@ -212,14 +216,11 @@ class MusicPlayer(ctk.CTk):
         self.bind("<F8>", self.control_bar.play_previous)
         self.bind("<F9>", self.control_bar.play_pause)
         self.bind("<space>", self.control_bar.play_pause)
-    
+
     def update_loop(self):
         self.loop.call_soon(self.loop.stop)
         self.loop.run_forever()
         self.after(1000, self.update_loop)
-
-    
-
 
 
 if __name__ == "__main__":

@@ -68,7 +68,9 @@ class ControlBar(ctk.CTkFrame):
         self.grid_columnconfigure(4, weight=0)
 
         # PLACEMENT
-        self.music_title_label.grid(row=0, column=0, sticky="w", padx=5, pady=10)
+        self.music_title_label.grid(
+            row=0, column=0, sticky="w", padx=5, pady=10
+        )
         self.playback_label.grid(row=0, column=1, sticky="w", padx=5, pady=10)
         self.prev_button.grid(row=0, column=2, sticky="nsew", padx=5, pady=10)
         self.play_button.grid(row=0, column=3, sticky="nsew", padx=5, pady=10)
@@ -95,7 +97,9 @@ class ControlBar(ctk.CTkFrame):
 
         # PLAY FROM END
         elif self.music_player.playlist_index == 0:
-            self.music_player.playlist_index = len(self.music_player.playlist) - 1
+            self.music_player.playlist_index = (
+                len(self.music_player.playlist) - 1
+            )
         # PLAY PREVIOUS
         else:
             self.music_player.playlist_index -= 1

@@ -5,11 +5,11 @@ import os
 from pathlib import Path
 
 import spotdl.utils
+import spotdl.utils.formatter
 import spotdl.utils.search
 from mus.util import SUPPORTED_FORMATS
 import spotdl
 import asyncio
-
 
 
 class TopBar(ctk.CTkFrame):
@@ -17,11 +17,11 @@ class TopBar(ctk.CTkFrame):
         super().__init__(parent, fg_color="#121212")
 
         self.parent = parent
-        
-        '''self.sptdl = spotdl.Spotdl(
+
+        """self.sptdl = spotdl.Spotdl(
             "5f573c9620494bae87890c0f08a60293", "212476d9b0f3472eaa762d90b19b0ba8",#loop=self.parent.loop
-        )'''
-        
+        )"""
+
         # WIDGETS
         self.open_folder = ctk.CTkButton(
             self,
@@ -42,7 +42,9 @@ class TopBar(ctk.CTkFrame):
 
         # WIDGET PLACEMENT
         self.open_folder.grid(row=0, column=0, sticky="w", pady=5, padx=10)
-        self.ytdl_placeholder.grid(row=0, column=1, sticky="w", pady=5, padx=10)
+        self.ytdl_placeholder.grid(
+            row=0, column=1, sticky="w", pady=5, padx=10
+        )
 
         # BINDINGS
         self.parent.bind("<Control-o>", self.choose_folder)
@@ -61,7 +63,9 @@ class TopBar(ctk.CTkFrame):
 
         # FILTER MUSIC FILES
         for root, _, files in os.walk(self.parent.current_folder):
-            music_files = [file for file in files if file.endswith(SUPPORTED_FORMATS)]
+            music_files = [
+                file for file in files if file.endswith(SUPPORTED_FORMATS)
+            ]
 
             for file in music_files:
                 file_path = os.path.join(root, file)
@@ -72,8 +76,7 @@ class TopBar(ctk.CTkFrame):
 
     def prompt_download(self):
         song_url = simpledialog.askstring(
-            "Download Music",
-            "Enter the URL of the song:"
+            "Download Music", "Enter the URL of the song:"
         )
         if song_url:
             print("gonna")
@@ -82,15 +85,28 @@ class TopBar(ctk.CTkFrame):
 
     async def download_song(self, song_url):
         print(song_url)
-        song,path = await asyncio.ensure_future(asyncio.to_thread(
+        song, path = await asyncio.ensure_future(
+            asyncio.to_thread(
                 self.parent.downloader.search_and_download,
-                spotdl.utils.search.get_simple_songs([song_url])[0]
-        ))
+                spotdl.utils.search.get_simple_songs([song_url])[0],
+            )
+        )
         await asyncio.sleep(0)
         print("after await")
-        downloaded_song_path = os.path.join(self.parent.current_folder, f"{song.display_name}.mp3")
+        downloaded_song_path = os.path.join(
+            self.parent.current_folder,
+            spotdl.utils.formatter.create_file_name(
+                song=song,
+                template=self.parent.downloader.settings["output"],
+                file_extension=self.parent.downloader.settings["format"],
+                restrict=self.parent.downloader.settings["restrict"],
+                file_name_length=self.parent.downloader.settings[
+                    "max_filename_length"
+                ],
+            ),
+        )
         print(downloaded_song_path)
-        
+
         self.parent.playlist.append(downloaded_song_path)
         self.parent.playlist_frame.song_list.insert(
             "end", f"• {Path(downloaded_song_path).stem}"
