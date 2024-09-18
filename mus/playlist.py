@@ -29,6 +29,7 @@ class PlaylistFrame(ctk.CTkFrame):
         self.song_list.bind("<Double-1>", self.play)
         self.song_list.bind("<Return>", self.play)
 
+    #SELECTION CALLBACK
     def play(self, event):
         try:
             index = event.widget.curselection()[0]

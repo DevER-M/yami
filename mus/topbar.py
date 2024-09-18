@@ -18,10 +18,6 @@ class TopBar(ctk.CTkFrame):
 
         self.parent = parent
 
-        """self.sptdl = spotdl.Spotdl(
-            "5f573c9620494bae87890c0f08a60293", "212476d9b0f3472eaa762d90b19b0ba8",#loop=self.parent.loop
-        )"""
-
         # WIDGETS
         self.open_folder = ctk.CTkButton(
             self,
@@ -41,9 +37,19 @@ class TopBar(ctk.CTkFrame):
         )
 
         # WIDGET PLACEMENT
-        self.open_folder.grid(row=0, column=0, sticky="w", pady=5, padx=10)
+        self.open_folder.grid(
+            row=0, 
+            column=0, 
+            sticky="w", 
+            pady=5, 
+            padx=10
+        )
         self.ytdl_placeholder.grid(
-            row=0, column=1, sticky="w", pady=5, padx=10
+            row=0, 
+            column=1, 
+            sticky="w", 
+            pady=5, 
+            padx=10
         )
 
         # BINDINGS
@@ -76,22 +82,22 @@ class TopBar(ctk.CTkFrame):
 
     def prompt_download(self):
         song_url = simpledialog.askstring(
-            "Download Music", "Enter the URL of the song:"
+            "Download Music", "Enter the name of the song:"
         )
         if song_url:
-            print("gonna")
             self.parent.loop.create_task(self.download_song(song_url))
-            print("ran")
 
     async def download_song(self, song_url):
         print(song_url)
+
+        #ASYNC UNTIL DOWNLOAD GETS OVER
         song, path = await asyncio.ensure_future(
             asyncio.to_thread(
                 self.parent.downloader.search_and_download,
                 spotdl.utils.search.get_simple_songs([song_url])[0],
             )
         )
-        await asyncio.sleep(0)
+        await asyncio.sleep(0)#STOP FROM FREEZING
         print("after await")
         downloaded_song_path = os.path.join(
             self.parent.current_folder,

@@ -69,7 +69,7 @@ class MusicPlayer(ctk.CTk):
         self.playlist_frame.pack(side=tk.RIGHT)
         self.cover_art_frame.pack(side=tk.LEFT)
 
-        # Start asyncio loop integration with tkinter
+        #UPDATE LOOP
         self.after(EVENT_INTERVAL, self.update)
 
     def update(self):

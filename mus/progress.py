@@ -1,5 +1,4 @@
 import customtkinter as ctk
-from mus.util import PlayerState, EVENT_INTERVAL
 
 
 class BottomFrame(ctk.CTkFrame):
