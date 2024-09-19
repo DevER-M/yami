@@ -69,7 +69,7 @@ class MusicPlayer(ctk.CTk):
         self.bottom_frame.pack(side=tk.BOTTOM, fill=tk.X)
         self.control_bar.pack(side=tk.BOTTOM, fill=tk.X)
         self.playlist_frame.pack(side=tk.RIGHT)
-        self.cover_art_frame.pack(side=tk.LEFT,padx=10)
+        self.cover_art_frame.pack(side=tk.LEFT, padx=10)
 
         # UPDATE LOOP
         self.after(EVENT_INTERVAL, self.update)
@@ -116,7 +116,9 @@ class MusicPlayer(ctk.CTk):
 
             # CHANGE INFO
             cover_image = self.get_album_cover(self.playlist[index])
-            self.cover_art_frame.cover_art_label.configure(require_redraw=True,image=cover_image,fg_color="#121212")
+            self.cover_art_frame.cover_art_label.configure(
+                require_redraw=True, image=cover_image, fg_color="#121212"
+            )
 
             self.control_bar.set_music_title(
                 self.get_song_title(self.playlist[index]),
@@ -126,6 +128,13 @@ class MusicPlayer(ctk.CTk):
 
             self.bottom_frame.start_progress_bar(
                 self.get_song_length(self.playlist[index]),
+            )
+
+            mpris_service.update_metadata(
+                title=self.get_song_title(self.playlist[index]),
+                artist=self.get_song_artist(self.playlist[index]),
+                album=".",  # Replace with actual album if available
+                length=self.get_song_length(self.playlist[index]),
             )
         except Exception as e:
             print(e)

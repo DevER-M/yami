@@ -55,7 +55,7 @@ class ControlBar(ctk.CTkFrame):
             fg_color="#121212",
             width=20,
             anchor="w",
-            text_color="#e0e0e0"
+            text_color="#e0e0e0",
         )
         self.playback_label = ctk.CTkLabel(
             self, text="0:00 / 0:00", font=("roboto", 12), fg_color="#121212"
