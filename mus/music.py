@@ -13,6 +13,7 @@ from mus.cover_art import CoverArtFrame
 from mus.progress import BottomFrame
 import asyncio
 import spotdl
+import logging
 
 ctk.set_default_color_theme("theme.json")
 ctk.set_appearance_mode("dark")
@@ -129,15 +130,12 @@ class MusicPlayer(ctk.CTk):
             self.bottom_frame.start_progress_bar(
                 self.get_song_length(self.playlist[index]),
             )
-
-            mpris_service.update_metadata(
-                title=self.get_song_title(self.playlist[index]),
-                artist=self.get_song_artist(self.playlist[index]),
-                album=".",  # Replace with actual album if available
-                length=self.get_song_length(self.playlist[index]),
+            logging.info(
+                f"playing {self.get_song_title(self.playlist[index])}"
             )
+
         except Exception as e:
-            print(e)
+            logging.error(e)
 
     def play_next_song(self, event=None):
         if not self.playlist:
@@ -153,6 +151,7 @@ class MusicPlayer(ctk.CTk):
         # UPDATE SELECTION
         self.playlist_frame.song_list.selection_clear(0, tk.END)
         self.playlist_frame.song_list.select_set(self.playlist_index)
+        logging.info("playing next song")
 
     def get_song_length(self, file_path):
         audio = File(file_path)
@@ -186,7 +185,6 @@ class MusicPlayer(ctk.CTk):
                         cover_data = tag.data
                         break
                 if cover_data:
-
                     # TEMP STORE COVER
                     with tempfile.NamedTemporaryFile(
                         delete=False, suffix=".jpg"
@@ -199,8 +197,8 @@ class MusicPlayer(ctk.CTk):
                         size=(250, 250),
                     )
                 return None
-            except:
-                return None
+            except Exception as e:
+                logging.error(e)
 
     # ROUNDS ALBUM COVER
     def round_corners(self, image, radius):
@@ -220,7 +218,8 @@ class MusicPlayer(ctk.CTk):
             else:
                 audio = id3.ID3(filepath)
                 return audio["TPE1"].text[0]
-        except:
+        except Exception as e:
+            logging.error(e)
             return "Unknown"
 
     def get_song_position(self):
@@ -247,6 +246,7 @@ class MusicPlayer(ctk.CTk):
         self.next_icon = ctk.CTkImage(Image.open("pic/skip_next.png"))
         self.folder_icon = ctk.CTkImage(Image.open("pic/folder.png"))
         self.music_icon = ctk.CTkImage(Image.open("pic/music.png"))
+        logging.info("icons setup")
 
     def setup_bindings(self):
         self.bind("<F10>", self.play_next_song)

@@ -10,6 +10,7 @@ import spotdl.utils.search
 from mus.util import SUPPORTED_FORMATS
 import spotdl
 import asyncio
+import logging
 
 
 class TopBar(ctk.CTkFrame):
@@ -27,7 +28,7 @@ class TopBar(ctk.CTkFrame):
             width=70,
             image=folder_icon,
         )
-        self.ytdl_placeholder = ctk.CTkButton(
+        self.music_downloader = ctk.CTkButton(
             self,
             text="Download",
             font=("roboto", 15),
@@ -37,9 +38,19 @@ class TopBar(ctk.CTkFrame):
         )
 
         # WIDGET PLACEMENT
-        self.open_folder.grid(row=0, column=1, sticky="w", pady=5, padx=10)
-        self.ytdl_placeholder.grid(
-            row=0, column=2, sticky="w", pady=5, padx=10
+        self.open_folder.grid(
+            row=0, 
+            column=1, 
+            sticky="w", 
+            pady=5, 
+            padx=10
+        )
+        self.music_downloader.grid(
+            row=0, 
+            column=2, 
+            sticky="w", 
+            pady=5, 
+            padx=10
         )
 
         # BINDINGS
@@ -71,37 +82,45 @@ class TopBar(ctk.CTkFrame):
                 )
 
     def prompt_download(self):
+        if not self.parent.current_folder:
+            self.choose_folder()
         song_url = simpledialog.askstring(
             "Download Music", "Enter the name of the song:"
         )
         if song_url:
+            self.music_downloader.configure(state="disabled")
             self.parent.loop.create_task(self.download_song(song_url))
 
     async def download_song(self, song_url):
-        print(song_url)
+        try:
+            logging.info(f"searching {song_url}")
 
-        # ASYNC UNTIL DOWNLOAD GETS OVER
-        song, path = await asyncio.ensure_future(
-            asyncio.to_thread(
-                self.parent.downloader.search_and_download,
-                spotdl.utils.search.get_simple_songs([song_url])[0],
+            # ASYNC UNTIL DOWNLOAD GETS OVER
+            song, path = await asyncio.ensure_future(
+                asyncio.to_thread(
+                    self.parent.downloader.search_and_download,
+                    spotdl.utils.search.get_simple_songs([song_url])[0],
+                )
             )
-        )
-        await asyncio.sleep(0)  # STOP FROM FREEZING
-        print("after await")
-        downloaded_song_path = os.path.join(
-            self.parent.current_folder,
-            spotdl.utils.formatter.create_file_name(
-                song=song,
-                template=self.parent.downloader.settings["output"],
-                file_extension=self.parent.downloader.settings["format"],
-                restrict=self.parent.downloader.settings["restrict"],
-                file_name_length=self.parent.downloader.settings[
-                    "max_filename_length"
-                ],
-            ),
-        )
-        print(downloaded_song_path)
+            await asyncio.sleep(0)  # STOP FROM FREEZING
+            logging.info("saving file")
+            downloaded_song_path = os.path.join(
+                self.parent.current_folder,
+                spotdl.utils.formatter.create_file_name(
+                    song=song,
+                    template=self.parent.downloader.settings["output"],
+                    file_extension=self.parent.downloader.settings["format"],
+                    restrict=self.parent.downloader.settings["restrict"],
+                    file_name_length=self.parent.downloader.settings[
+                        "max_filename_length"
+                    ],
+                ),
+            )
+            logging.info(f"saved at {downloaded_song_path}")
+        except Exception as e:
+            logging.error(e)
+        finally:
+            self.music_downloader.configure(state="normal")
 
         self.parent.playlist.append(downloaded_song_path)
         self.parent.playlist_frame.song_list.insert(

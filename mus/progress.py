@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import logging
 
 
 class BottomFrame(ctk.CTkFrame):
@@ -15,6 +16,7 @@ class BottomFrame(ctk.CTkFrame):
         self.pack(fill="x")  # IMP
 
     def start_progress_bar(self, song_length):
+        logging.info("progress bar started")
         self.progress_bar.set(0)
         self.music_player.song_length = song_length
         self.music_player.update()

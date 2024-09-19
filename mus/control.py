@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from mus.util import BUTTON_WIDTH, PlayerState
 import tkinter as tk
+import logging
 
 
 class ControlBar(ctk.CTkFrame):
@@ -81,9 +82,11 @@ class ControlBar(ctk.CTkFrame):
         if self.music_player.STATE == PlayerState.PLAYING:
             self.music_player.music.pause()
             self.music_player.STATE = PlayerState.PAUSED
+            logging.info("paused")
         else:
             self.music_player.music.unpause()
             self.music_player.STATE = PlayerState.PLAYING
+            logging.info("resumed")
         self.update_play_button(self.music_player.STATE)
 
     def update_play_button(self, state):
@@ -98,12 +101,14 @@ class ControlBar(ctk.CTkFrame):
 
         # PLAY FROM END
         elif self.music_player.playlist_index == 0:
+            logging.info("playing from end")
             self.music_player.playlist_index = (
                 len(self.music_player.playlist) - 1
             )
         # PLAY PREVIOUS
         else:
             self.music_player.playlist_index -= 1
+            logging.info("playing previous")
         self.music_player.load_and_play_song(self.music_player.playlist_index)
 
         # UPDATE SELECTION
