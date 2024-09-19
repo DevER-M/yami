@@ -13,6 +13,6 @@ class CoverArtFrame(ctk.CTkFrame):
             width=250,
             height=250,
             fg_color="#141414",
-            corner_radius=10,
+            corner_radius=2,
         )
-        self.cover_art_label.grid(sticky="swen", padx=10)
+        self.cover_art_label.grid(sticky="swen", padx=20)

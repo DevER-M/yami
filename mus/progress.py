@@ -8,7 +8,7 @@ class BottomFrame(ctk.CTkFrame):
         # SETUP
         self.music_player = parent
 
-        self.progress_bar = ctk.CTkProgressBar(self, progress_color="#1f0469")
+        self.progress_bar = ctk.CTkProgressBar(self, progress_color="#3aafa9")
         self.progress_bar.pack(fill="x", expand=True)
         self.progress_bar.set(0)
 

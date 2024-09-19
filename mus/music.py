@@ -1,7 +1,7 @@
 from mutagen import File, id3
 import customtkinter as ctk
 from pathlib import Path
-from PIL import Image
+from PIL import Image, ImageDraw
 from mus.util import GEOMETRY, TITLE, PlayerState, EVENT_INTERVAL
 import tkinter as tk
 import tempfile
@@ -15,6 +15,7 @@ import asyncio
 import spotdl
 
 ctk.set_default_color_theme("theme.json")
+ctk.set_appearance_mode("dark")
 
 
 class MusicPlayer(ctk.CTk):
@@ -24,6 +25,7 @@ class MusicPlayer(ctk.CTk):
         # CONFIG
         self.geometry(GEOMETRY)
         self.title(TITLE)
+        self.attributes("-alpha", 0.4)
 
         # STATE
         self.playlist = []
@@ -69,22 +71,27 @@ class MusicPlayer(ctk.CTk):
         self.playlist_frame.pack(side=tk.RIGHT)
         self.cover_art_frame.pack(side=tk.LEFT)
 
-        #UPDATE LOOP
+        # UPDATE LOOP
         self.after(EVENT_INTERVAL, self.update)
+        self.update_loop()
 
     def update(self):
-        self.update_idletasks()
-        self.update_loop()
         if self.STATE == PlayerState.PLAYING:
             song_position = self.get_song_position()
 
             # GETS RATIO OF PROGRESS
             progress = song_position / self.song_length
             self.bottom_frame.progress_bar.set(progress)
+
             minutes = int(song_position // 60)
             seconds = int(song_position % 60)
-            time_string = f"{minutes:02d}:{seconds:02d}"
 
+            song_min = int(self.song_length // 60)
+            song_sec = int(self.song_length % 60)
+
+            time_string = (
+                f"{minutes:02d}:{seconds:02d} / {song_min:02d}:{song_sec:02d}"
+            )
             self.control_bar.playback_label.configure(text=time_string)
 
             if song_position < self.song_length:
@@ -112,12 +119,13 @@ class MusicPlayer(ctk.CTk):
             self.cover_art_frame.cover_art_label.configure(image=cover_image)
 
             self.control_bar.set_music_title(
-                self.get_song_title(self.playlist[index])
+                self.get_song_title(self.playlist[index]),
+                self.get_song_artist(self.playlist[index]),
             )
             self.control_bar.update_play_button(self.STATE)
 
             self.bottom_frame.start_progress_bar(
-                self.get_song_length(self.playlist[index])
+                self.get_song_length(self.playlist[index]),
             )
         except Exception as e:
             print(e)
@@ -177,14 +185,34 @@ class MusicPlayer(ctk.CTk):
                         temp_file.write(cover_data)
                         temp_path = temp_file.name
 
-                    return ctk.CTkImage(Image.open(temp_path), size=(250, 250))
+                    return ctk.CTkImage(
+                        self.round_corners(Image.open(temp_path), 20),
+                        size=(250, 250),
+                    )
                 return None
             except:
                 return None
 
-    # WIP
-    def get_artist(self, filepath):
-        pass
+    # ROUNDS ALBUM COVER
+    def round_corners(self, image, radius):
+        rounded_mask = Image.new("L", image.size, 0)
+        draw = ImageDraw.Draw(rounded_mask)
+        draw.rounded_rectangle((0, 0) + image.size, radius, fill=255)
+
+        rounded_image = Image.new("RGBA", image.size)
+        rounded_image.paste(image, (0, 0), mask=rounded_mask)
+
+        return rounded_image
+
+    def get_song_artist(self, filepath):
+        try:
+            if not filepath.endswith(".mp3"):
+                return "Unknown"
+            else:
+                audio = id3.ID3(filepath)
+                return audio["TPE1"].text[0]
+        except:
+            return "Unknown"
 
     def get_song_position(self):
         return pygame.mixer.music.get_pos() / 1000

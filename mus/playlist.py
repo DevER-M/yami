@@ -9,16 +9,18 @@ class PlaylistFrame(ctk.CTkFrame):
 
         self.song_list = tk.Listbox(
             self,
-            borderwidth=5,
-            activestyle="dotbox",
+            borderwidth=10,
+            activestyle="none",
             width=32,
             height=18,
             relief="flat",
-            bd=10,
-            bg="#121212",
-            fg="#FFFFFF",
-            selectbackground="#1f0469",
+            bg="#141414",
+            fg="#e0e0e0",
+            selectbackground="#3aafa9",
             font=("roboto", 12),
+            border=100,
+            bd=10,
+            highlightthickness=0,
         )
         self.song_list.grid(column=0, row=0, sticky="nesw")
 
@@ -29,7 +31,7 @@ class PlaylistFrame(ctk.CTkFrame):
         self.song_list.bind("<Double-1>", self.play)
         self.song_list.bind("<Return>", self.play)
 
-    #SELECTION CALLBACK
+    # SELECTION CALLBACK
     def play(self, event):
         try:
             index = event.widget.curselection()[0]

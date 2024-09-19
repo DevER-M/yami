@@ -37,19 +37,9 @@ class TopBar(ctk.CTkFrame):
         )
 
         # WIDGET PLACEMENT
-        self.open_folder.grid(
-            row=0, 
-            column=0, 
-            sticky="w", 
-            pady=5, 
-            padx=10
-        )
+        self.open_folder.grid(row=0, column=1, sticky="w", pady=5, padx=10)
         self.ytdl_placeholder.grid(
-            row=0, 
-            column=1, 
-            sticky="w", 
-            pady=5, 
-            padx=10
+            row=0, column=2, sticky="w", pady=5, padx=10
         )
 
         # BINDINGS
@@ -90,14 +80,14 @@ class TopBar(ctk.CTkFrame):
     async def download_song(self, song_url):
         print(song_url)
 
-        #ASYNC UNTIL DOWNLOAD GETS OVER
+        # ASYNC UNTIL DOWNLOAD GETS OVER
         song, path = await asyncio.ensure_future(
             asyncio.to_thread(
                 self.parent.downloader.search_and_download,
                 spotdl.utils.search.get_simple_songs([song_url])[0],
             )
         )
-        await asyncio.sleep(0)#STOP FROM FREEZING
+        await asyncio.sleep(0)  # STOP FROM FREEZING
         print("after await")
         downloaded_song_path = os.path.join(
             self.parent.current_folder,
