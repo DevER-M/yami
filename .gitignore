@@ -6,3 +6,5 @@ b.py
 a.py
 __pycache__
 */__pycache__
+*.mp4
+*.mov

@@ -3,7 +3,6 @@ from tkinter import filedialog, simpledialog
 import tkinter as tk
 import os
 from pathlib import Path
-
 import spotdl.utils
 import spotdl.utils.formatter
 import spotdl.utils.search
@@ -11,7 +10,8 @@ from mus.util import SUPPORTED_FORMATS
 import spotdl
 import asyncio
 import logging
-
+from mus.game import BeatsGame
+import multiprocessing
 
 class TopBar(ctk.CTkFrame):
     def __init__(self, parent, folder_icon, music_icon):
@@ -37,21 +37,21 @@ class TopBar(ctk.CTkFrame):
             command=self.prompt_download,
         )
 
+        self.yami = ctk.CTkButton(
+            self,
+            text="Yami",
+            font=("roboto", 15),
+            width=70,
+            image=music_icon,
+            command=multiprocessing.Process(target=BeatsGame,daemon=False).start
+        )
+
         # WIDGET PLACEMENT
-        self.open_folder.grid(
-            row=0, 
-            column=1, 
-            sticky="w", 
-            pady=5, 
-            padx=10
-        )
+        self.open_folder.grid(row=0, column=1, sticky="w", pady=5, padx=10)
         self.music_downloader.grid(
-            row=0, 
-            column=2, 
-            sticky="w", 
-            pady=5, 
-            padx=10
+            row=0, column=2, sticky="w", pady=5, padx=10
         )
+        self.yami.grid(row=0, column=3, sticky="w", pady=5, padx=10)
 
         # BINDINGS
         self.parent.bind("<Control-o>", self.choose_folder)
