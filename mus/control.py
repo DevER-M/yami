@@ -1,10 +1,14 @@
-import customtkinter as ctk
-from mus.util import BUTTON_WIDTH, PlayerState
+"""Player Controls"""
+
 import tkinter as tk
 import logging
+import customtkinter as ctk
+from util import BUTTON_WIDTH, PlayerState
 
 
 class ControlBar(ctk.CTkFrame):
+    """All Player Controls"""
+
     def __init__(
         self,
         parent,
@@ -98,7 +102,7 @@ class ControlBar(ctk.CTkFrame):
             return
 
         # PLAY FROM END
-        elif self.music_player.playlist_index == 0:
+        if self.music_player.playlist_index == 0:
             logging.info("playing from end")
             self.music_player.playlist_index = len(self.music_player.playlist) - 1
         # PLAY PREVIOUS
