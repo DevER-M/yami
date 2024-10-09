@@ -60,10 +60,7 @@ class ControlBar(ctk.CTkFrame):
             text_color="#e0e0e0",
         )
         self.playback_label = ctk.CTkLabel(
-            self, 
-            text="0:00 / 0:00", 
-            font=("roboto", 12), 
-            fg_color="#121212"
+            self, text="0:00 / 0:00", font=("roboto", 12), fg_color="#121212"
         )
 
         # PLACEMENT
@@ -130,13 +127,11 @@ class ControlBar(ctk.CTkFrame):
     # TRUNCATOR
     def set_music_title(self, title, artist):
         """Truncates And Sets Music Title"""
-        
+
         if len(title) > self.title_max_chars:
             truncated_title = title[: self.title_max_chars - 3] + "..."
         else:
             truncated_title = title
         self.music_title_label.configure(
-            text=truncated_title 
-            + " - " 
-            + artist.replace("/", ",")
+            text=truncated_title + " - " + artist.replace("/", ",")
         )

@@ -21,6 +21,7 @@ class TopBar(ctk.CTkFrame):
 
     def __init__(self, parent):
         super().__init__(parent, fg_color="#121212")
+        self.parent = parent
 
         # WIDGETS
         self.open_folder = ctk.CTkButton(

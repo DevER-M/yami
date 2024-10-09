@@ -37,12 +37,12 @@ class MusicPlayer(ctk.CTk):
         self.attributes("-alpha", 0.4)
 
         # STATE
-        self.playlist       = []
-        self.STATE          = PlayerState.STOPPED
+        self.playlist = []
+        self.STATE = PlayerState.STOPPED
         self.current_folder = ""
         self.playlist_index = 0
-        self.loop           = loop if loop is not None else asyncio.new_event_loop()
-        self.downloader     = spotdl.Downloader(
+        self.loop = loop if loop is not None else asyncio.new_event_loop()
+        self.downloader = spotdl.Downloader(
             spotdl.DownloaderOptions(threads=4)
         )
         spotdl.SpotifyClient.init(
@@ -57,20 +57,20 @@ class MusicPlayer(ctk.CTk):
         self.setup_icons()
 
         # FRAMES
-        self.topbar          = TopBar(self)
-        self.control_bar     = ControlBar(self)
-        self.playlist_frame  = PlaylistFrame(self)
-        self.bottom_frame    = BottomFrame(self)
+        self.topbar = TopBar(self)
+        self.control_bar = ControlBar(self)
+        self.playlist_frame = PlaylistFrame(self)
+        self.bottom_frame = BottomFrame(self)
         self.cover_art_frame = CoverArtFrame(self)
 
         # BINDINGS AND EVENTS
         self.setup_bindings()
 
         # WIDGET PLACEMENT
-        self.topbar.pack         (side=tk.TOP, fill=tk.X)
-        self.bottom_frame.pack   (side=tk.BOTTOM, fill=tk.X)
-        self.control_bar.pack    (side=tk.BOTTOM, fill=tk.X)
-        self.playlist_frame.pack (side=tk.RIGHT)
+        self.topbar.pack(side=tk.TOP, fill=tk.X)
+        self.bottom_frame.pack(side=tk.BOTTOM, fill=tk.X)
+        self.control_bar.pack(side=tk.BOTTOM, fill=tk.X)
+        self.playlist_frame.pack(side=tk.RIGHT)
         self.cover_art_frame.pack(side=tk.LEFT, padx=10)
 
         # UPDATE LOOP
@@ -240,18 +240,18 @@ class MusicPlayer(ctk.CTk):
                 self.play_next_song()
 
     def setup_icons(self):
-        self.play_icon   = ctk.CTkImage(Image.open("pic/play_arrow.png"))
-        self.pause_icon  = ctk.CTkImage(Image.open("pic/pause.png"))
-        self.prev_icon   = ctk.CTkImage(Image.open("pic/skip_prev.png"))
-        self.next_icon   = ctk.CTkImage(Image.open("pic/skip_next.png"))
+        self.play_icon = ctk.CTkImage(Image.open("pic/play_arrow.png"))
+        self.pause_icon = ctk.CTkImage(Image.open("pic/pause.png"))
+        self.prev_icon = ctk.CTkImage(Image.open("pic/skip_prev.png"))
+        self.next_icon = ctk.CTkImage(Image.open("pic/skip_next.png"))
         self.folder_icon = ctk.CTkImage(Image.open("pic/folder.png"))
-        self.music_icon  = ctk.CTkImage(Image.open("pic/music.png"))
+        self.music_icon = ctk.CTkImage(Image.open("pic/music.png"))
         logging.info("icons setup")
 
     def setup_bindings(self):
-        self.bind("<F10>",   self.play_next_song)
-        self.bind("<F8>",    self.control_bar.play_previous)
-        self.bind("<F9>",    self.control_bar.play_pause)
+        self.bind("<F10>", self.play_next_song)
+        self.bind("<F8>", self.control_bar.play_previous)
+        self.bind("<F9>", self.control_bar.play_pause)
         self.bind("<space>", self.control_bar.play_pause)
 
     def update_loop(self):
