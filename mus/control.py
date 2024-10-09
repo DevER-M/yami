@@ -3,7 +3,7 @@
 import tkinter as tk
 import logging
 import customtkinter as ctk
-from util import BUTTON_WIDTH, PlayerState
+from .util import BUTTON_WIDTH, PlayerState
 
 
 class ControlBar(ctk.CTkFrame):
@@ -12,19 +12,16 @@ class ControlBar(ctk.CTkFrame):
     def __init__(
         self,
         parent,
-        pause_icon,
-        play_icon,
-        prev_icon,
-        next_icon,
-        play_next_command,
     ):
         super().__init__(parent, corner_radius=10, fg_color="#121212")
 
         # SETUP
         self.music_player = parent
-        self.pause_icon = pause_icon
-        self.play_icon = play_icon
-        self.play_next_command = play_next_command
+        self.pause_icon = parent.pause_icon
+        self.play_icon = parent.play_icon
+        self.prev_icon = parent.prev_icon
+        self.next_icon = parent.next_icon
+        self.play_next_command = parent.play_next_song
         self.title_max_chars = 40
 
         # WIDGETS
@@ -34,16 +31,16 @@ class ControlBar(ctk.CTkFrame):
             width=BUTTON_WIDTH,
             height=10,
             text="",
-            image=pause_icon,
+            image=self.pause_icon,
             corner_radius=10,
         )
         self.next_button = ctk.CTkButton(
             self,
-            command=play_next_command,
+            command=self.play_next_command,
             width=BUTTON_WIDTH,
             text="",
             corner_radius=10,
-            image=next_icon,
+            image=self.next_icon,
         )
         self.prev_button = ctk.CTkButton(
             self,
@@ -51,7 +48,7 @@ class ControlBar(ctk.CTkFrame):
             width=BUTTON_WIDTH,
             corner_radius=10,
             command=self.play_previous,
-            image=prev_icon,
+            image=self.prev_icon,
         )
         self.music_title_label = ctk.CTkLabel(
             self,
@@ -63,7 +60,10 @@ class ControlBar(ctk.CTkFrame):
             text_color="#e0e0e0",
         )
         self.playback_label = ctk.CTkLabel(
-            self, text="0:00 / 0:00", font=("roboto", 12), fg_color="#121212"
+            self, 
+            text="0:00 / 0:00", 
+            font=("roboto", 12), 
+            fg_color="#121212"
         )
 
         # PLACEMENT
@@ -74,13 +74,17 @@ class ControlBar(ctk.CTkFrame):
         self.grid_columnconfigure(4, weight=0)
 
         # PLACEMENT
-        self.music_title_label.grid(row=0, column=0, sticky="w", padx=5, pady=10)
+        self.music_title_label.grid(
+            row=0, column=0, sticky="w", padx=5, pady=10
+        )
         self.playback_label.grid(row=0, column=1, sticky="w", padx=5, pady=10)
         self.prev_button.grid(row=0, column=2, sticky="nsew", padx=5, pady=10)
         self.play_button.grid(row=0, column=3, sticky="nsew", padx=5, pady=10)
         self.next_button.grid(row=0, column=4, sticky="nsew", padx=5, pady=10)
 
     def play_pause(self, event=None):
+        """Plays Or Pauses The Music"""
+
         if self.music_player.STATE == PlayerState.PLAYING:
             self.music_player.music.pause()
             self.music_player.STATE = PlayerState.PAUSED
@@ -92,19 +96,25 @@ class ControlBar(ctk.CTkFrame):
         self.update_play_button(self.music_player.STATE)
 
     def update_play_button(self, state):
+        """Switches Play/Pause Icon"""
+
         if state == PlayerState.PLAYING:
             self.play_button.configure(image=self.pause_icon)
         else:
             self.play_button.configure(image=self.play_icon)
 
     def play_previous(self, event=None):
+        """Play Previous Song/Goto Last Song"""
+
         if not self.music_player.playlist:
             return
 
         # PLAY FROM END
         if self.music_player.playlist_index == 0:
             logging.info("playing from end")
-            self.music_player.playlist_index = len(self.music_player.playlist) - 1
+            self.music_player.playlist_index = (
+                len(self.music_player.playlist) - 1
+            )
         # PLAY PREVIOUS
         else:
             self.music_player.playlist_index -= 1
@@ -119,10 +129,14 @@ class ControlBar(ctk.CTkFrame):
 
     # TRUNCATOR
     def set_music_title(self, title, artist):
+        """Truncates And Sets Music Title"""
+        
         if len(title) > self.title_max_chars:
             truncated_title = title[: self.title_max_chars - 3] + "..."
         else:
             truncated_title = title
         self.music_title_label.configure(
-            text=truncated_title + " - " + artist.replace("/", ",")
+            text=truncated_title 
+            + " - " 
+            + artist.replace("/", ",")
         )

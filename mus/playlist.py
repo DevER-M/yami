@@ -1,26 +1,30 @@
-import customtkinter as ctk
+"""Playlist"""
+
 import tkinter as tk
+import customtkinter as ctk
 
 
 class PlaylistFrame(ctk.CTkFrame):
+    """Playlist Holder"""
+
     def __init__(self, parent):
         super().__init__(parent, corner_radius=10, fg_color="#121212")
         self.parent = parent
 
         self.song_list = tk.Listbox(
             self,
-            borderwidth=10,
-            activestyle="none",
-            width=34,
-            height=18,
-            relief="flat",
-            bg="#141414",
-            fg="#e0e0e0",
-            selectbackground="#3aafa9",
-            font=("roboto", 12),
-            border=100,
-            bd=10,
-            highlightthickness=0,
+            borderwidth        = 10,
+            activestyle        = "none",
+            width              = 34,
+            height             = 18,
+            relief             = "flat",
+            bg                 = "#141414",
+            fg                 = "#e0e0e0",
+            selectbackground   = "#3aafa9",
+            font               = ("roboto", 12),
+            border             = 100,
+            bd                 = 10,
+            highlightthickness = 0,
         )
         self.song_list.grid(column=0, row=0, sticky="nesw")
 

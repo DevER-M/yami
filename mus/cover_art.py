@@ -1,7 +1,11 @@
+"""Frame For Cover Art"""
+
 import customtkinter as ctk
 
 
 class CoverArtFrame(ctk.CTkFrame):
+    """Cover Art Holder Frame"""
+
     def __init__(self, parent):
         super().__init__(
             parent,

@@ -1,8 +1,12 @@
-import customtkinter as ctk
+"""Progress Bar At The Bottom"""
+
 import logging
+import customtkinter as ctk
 
 
 class BottomFrame(ctk.CTkFrame):
+    """Progress Bar Frame"""
+
     def __init__(self, parent):
         super().__init__(parent)
 

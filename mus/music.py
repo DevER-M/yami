@@ -1,26 +1,34 @@
-from mutagen import File, id3
-import customtkinter as ctk
+"""Root Widget"""
+
 from pathlib import Path
-from PIL import Image, ImageDraw
-from mus.util import GEOMETRY, TITLE, PlayerState, EVENT_INTERVAL
 import tkinter as tk
 import tempfile
-import pygame
-from mus.topbar import TopBar
-from mus.playlist import PlaylistFrame
-from mus.control import ControlBar
-from mus.cover_art import CoverArtFrame
-from mus.progress import BottomFrame
 import asyncio
-import spotdl
 import logging
+
+from mutagen import File, id3
+import customtkinter as ctk
+from PIL import Image, ImageDraw
+import spotdl
+import pygame
+
+from .topbar import TopBar
+from .playlist import PlaylistFrame
+from .control import ControlBar
+from .cover_art import CoverArtFrame
+from .progress import BottomFrame
+from .util import GEOMETRY, TITLE, PlayerState, EVENT_INTERVAL
+
 
 ctk.set_default_color_theme("theme.json")
 ctk.set_appearance_mode("dark")
 
 
 class MusicPlayer(ctk.CTk):
+    """ROOT"""
+
     def __init__(self: ctk.CTk, loop=None):
+        """ROOT INIT"""
         super().__init__()
 
         # CONFIG
@@ -29,12 +37,14 @@ class MusicPlayer(ctk.CTk):
         self.attributes("-alpha", 0.4)
 
         # STATE
-        self.playlist = []
-        self.STATE = PlayerState.STOPPED
+        self.playlist       = []
+        self.STATE          = PlayerState.STOPPED
         self.current_folder = ""
         self.playlist_index = 0
-        self.loop = loop if loop is not None else asyncio.new_event_loop()
-        self.downloader = spotdl.Downloader(spotdl.DownloaderOptions(threads=4))
+        self.loop           = loop if loop is not None else asyncio.new_event_loop()
+        self.downloader     = spotdl.Downloader(
+            spotdl.DownloaderOptions(threads=4)
+        )
         spotdl.SpotifyClient.init(
             "5f573c9620494bae87890c0f08a60293",
             "212476d9b0f3472eaa762d90b19b0ba8",
@@ -47,27 +57,20 @@ class MusicPlayer(ctk.CTk):
         self.setup_icons()
 
         # FRAMES
-        self.topbar = TopBar(self, self.folder_icon, self.music_icon)
-        self.control_bar = ControlBar(
-            self,
-            self.pause_icon,
-            self.play_icon,
-            self.prev_icon,
-            self.next_icon,
-            self.play_next_song,
-        )
-        self.playlist_frame = PlaylistFrame(self)
-        self.bottom_frame = BottomFrame(self)
+        self.topbar          = TopBar(self)
+        self.control_bar     = ControlBar(self)
+        self.playlist_frame  = PlaylistFrame(self)
+        self.bottom_frame    = BottomFrame(self)
         self.cover_art_frame = CoverArtFrame(self)
 
         # BINDINGS AND EVENTS
         self.setup_bindings()
 
         # WIDGET PLACEMENT
-        self.topbar.pack(side=tk.TOP, fill=tk.X)
-        self.bottom_frame.pack(side=tk.BOTTOM, fill=tk.X)
-        self.control_bar.pack(side=tk.BOTTOM, fill=tk.X)
-        self.playlist_frame.pack(side=tk.RIGHT)
+        self.topbar.pack         (side=tk.TOP, fill=tk.X)
+        self.bottom_frame.pack   (side=tk.BOTTOM, fill=tk.X)
+        self.control_bar.pack    (side=tk.BOTTOM, fill=tk.X)
+        self.playlist_frame.pack (side=tk.RIGHT)
         self.cover_art_frame.pack(side=tk.LEFT, padx=10)
 
         # UPDATE LOOP
@@ -88,7 +91,9 @@ class MusicPlayer(ctk.CTk):
             song_min = int(self.song_length // 60)
             song_sec = int(self.song_length % 60)
 
-            time_string = f"{minutes:02d}:{seconds:02d} / {song_min:02d}:{song_sec:02d}"
+            time_string = (
+                f"{minutes:02d}:{seconds:02d} / {song_min:02d}:{song_sec:02d}"
+            )
             self.control_bar.playback_label.configure(text=time_string)
 
             if song_position < self.song_length:
@@ -126,17 +131,19 @@ class MusicPlayer(ctk.CTk):
             self.bottom_frame.start_progress_bar(
                 self.get_song_length(self.playlist[index]),
             )
-            logging.info(f"playing {self.get_song_title(self.playlist[index])}")
+            logging.info(
+                "playing %s", self.get_song_title(self.playlist[index])
+            )
 
         except Exception as e:
             logging.error(e)
 
-    def play_next_song(self, event=None):
+    def play_next_song(self, _event=None):
         if not self.playlist:
             return
 
         # PLAY FROM BEGINING
-        elif self.playlist_index >= len(self.playlist) - 1:
+        if self.playlist_index >= len(self.playlist) - 1:
             self.playlist_index = 0
         else:
             self.playlist_index += 1
@@ -151,48 +158,47 @@ class MusicPlayer(ctk.CTk):
         audio = File(file_path)
         if audio is not None and audio.info is not None:
             return audio.info.length
-        else:
-            return 0
+        return 0
 
     def get_song_title(self, file_path):
         try:
             # NO TITLE METADATA
             if not file_path.endswith(".mp3"):
                 return Path(file_path).stem
-            else:
-                audio = id3.ID3(file_path)
-                return audio["TIT2"].text[0]
+
+            audio = id3.ID3(file_path)
+            return audio["TIT2"].text[0]
         except:
             return ""
 
     def get_album_cover(self, file_path):
         if not file_path.endswith(".mp3"):
-            return None
-        else:
-            try:
-                audio_file = id3.ID3(file_path)
-                cover_data = None
+            return
+        try:
+            audio_file = id3.ID3(file_path)
+            cover_data = None
 
-                # APIC TAG FOR IMAGE DATA
-                for tag in audio_file.getall("APIC"):
-                    if tag.mime == "image/jpeg" or tag.mime == "image/png":
-                        cover_data = tag.data
-                        break
-                if cover_data:
-                    # TEMP STORE COVER
-                    with tempfile.NamedTemporaryFile(
-                        delete=False, suffix=".jpg"
-                    ) as temp_file:
-                        temp_file.write(cover_data)
-                        temp_path = temp_file.name
+            # APIC TAG FOR IMAGE DATA
+            for tag in audio_file.getall("APIC"):
+                if tag.mime in ("image/jpeg", "image/png"):
+                    cover_data = tag.data
+                    break
+            if cover_data:
+                # TEMP STORE COVER
+                with tempfile.NamedTemporaryFile(
+                    delete=False, suffix=".jpg"
+                ) as temp_file:
+                    temp_file.write(cover_data)
+                    temp_path = temp_file.name
 
-                    return ctk.CTkImage(
-                        self.round_corners(Image.open(temp_path), 20),
-                        size=(250, 250),
-                    )
-                return None
-            except Exception as e:
-                logging.error(e)
+                return ctk.CTkImage(
+                    self.round_corners(Image.open(temp_path), 20),
+                    size=(250, 250),
+                )
+            return
+        except Exception as e:
+            logging.error(e)
+            return
 
     # ROUNDS ALBUM COVER
     def round_corners(self, image, radius):
@@ -209,9 +215,9 @@ class MusicPlayer(ctk.CTk):
         try:
             if not filepath.endswith(".mp3"):
                 return "Unknown"
-            else:
-                audio = id3.ID3(filepath)
-                return audio["TPE1"].text[0]
+
+            audio = id3.ID3(filepath)
+            return audio["TPE1"].text[0]
         except Exception as e:
             logging.error(e)
             return "Unknown"
@@ -234,18 +240,18 @@ class MusicPlayer(ctk.CTk):
                 self.play_next_song()
 
     def setup_icons(self):
-        self.play_icon = ctk.CTkImage(Image.open("pic/play_arrow.png"))
-        self.pause_icon = ctk.CTkImage(Image.open("pic/pause.png"))
-        self.prev_icon = ctk.CTkImage(Image.open("pic/skip_prev.png"))
-        self.next_icon = ctk.CTkImage(Image.open("pic/skip_next.png"))
+        self.play_icon   = ctk.CTkImage(Image.open("pic/play_arrow.png"))
+        self.pause_icon  = ctk.CTkImage(Image.open("pic/pause.png"))
+        self.prev_icon   = ctk.CTkImage(Image.open("pic/skip_prev.png"))
+        self.next_icon   = ctk.CTkImage(Image.open("pic/skip_next.png"))
         self.folder_icon = ctk.CTkImage(Image.open("pic/folder.png"))
-        self.music_icon = ctk.CTkImage(Image.open("pic/music.png"))
+        self.music_icon  = ctk.CTkImage(Image.open("pic/music.png"))
         logging.info("icons setup")
 
     def setup_bindings(self):
-        self.bind("<F10>", self.play_next_song)
-        self.bind("<F8>", self.control_bar.play_previous)
-        self.bind("<F9>", self.control_bar.play_pause)
+        self.bind("<F10>",   self.play_next_song)
+        self.bind("<F8>",    self.control_bar.play_previous)
+        self.bind("<F9>",    self.control_bar.play_pause)
         self.bind("<space>", self.control_bar.play_pause)
 
     def update_loop(self):

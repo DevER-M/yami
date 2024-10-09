@@ -1,22 +1,26 @@
-import customtkinter as ctk
-from tkinter import filedialog, simpledialog
+"""Top Bar"""
+
+import asyncio
+import logging
 import tkinter as tk
+from tkinter import filedialog, simpledialog
 import os
 from pathlib import Path
+
+import customtkinter as ctk
 import spotdl.utils
 import spotdl.utils.formatter
 import spotdl.utils.search
-from mus.util import SUPPORTED_FORMATS
 import spotdl
-import asyncio
-import logging
+
+from .util import SUPPORTED_FORMATS
 
 
 class TopBar(ctk.CTkFrame):
-    def __init__(self, parent, folder_icon, music_icon):
-        super().__init__(parent, fg_color="#121212")
+    """Holds Download And Open Buttons"""
 
-        self.parent = parent
+    def __init__(self, parent):
+        super().__init__(parent, fg_color="#121212")
 
         # WIDGETS
         self.open_folder = ctk.CTkButton(
@@ -25,14 +29,14 @@ class TopBar(ctk.CTkFrame):
             text="Open",
             font=("roboto", 15),
             width=70,
-            image=folder_icon,
+            image=parent.folder_icon,
         )
         self.music_downloader = ctk.CTkButton(
             self,
             text="Download",
             font=("roboto", 15),
             width=70,
-            image=music_icon,
+            image=parent.music_icon,
             command=self.prompt_download,
         )
 
@@ -41,12 +45,14 @@ class TopBar(ctk.CTkFrame):
             text="About",
             font=("roboto", 15),
             width=70,
-            image=music_icon,
+            image=parent.music_icon,
         )
 
         # WIDGET PLACEMENT
         self.open_folder.grid(row=0, column=1, sticky="w", pady=5, padx=10)
-        self.music_downloader.grid(row=0, column=2, sticky="w", pady=5, padx=10)
+        self.music_downloader.grid(
+            row=0, column=2, sticky="w", pady=5, padx=10
+        )
         self.yami.grid(row=0, column=3, sticky="w", pady=5, padx=10)
 
         # BINDINGS
@@ -66,7 +72,9 @@ class TopBar(ctk.CTkFrame):
 
         # FILTER MUSIC FILES
         for root, _, files in os.walk(self.parent.current_folder):
-            music_files = [file for file in files if file.endswith(SUPPORTED_FORMATS)]
+            music_files = [
+                file for file in files if file.endswith(SUPPORTED_FORMATS)
+            ]
 
             for file in music_files:
                 file_path = os.path.join(root, file)
@@ -87,7 +95,7 @@ class TopBar(ctk.CTkFrame):
 
     async def download_song(self, song_url):
         try:
-            logging.info(f"searching {song_url}")
+            logging.info("searching %s", song_url)
 
             # ASYNC UNTIL DOWNLOAD GETS OVER
             song, path = await asyncio.ensure_future(
@@ -110,7 +118,7 @@ class TopBar(ctk.CTkFrame):
                     ],
                 ),
             )
-            logging.info(f"saved at {downloaded_song_path}")
+            logging.info("saved at %s", downloaded_song_path)
         except Exception as e:
             logging.error(e)
         finally:
