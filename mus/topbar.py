@@ -10,8 +10,7 @@ from mus.util import SUPPORTED_FORMATS
 import spotdl
 import asyncio
 import logging
-from mus.game import BeatsGame
-import multiprocessing
+
 
 class TopBar(ctk.CTkFrame):
     def __init__(self, parent, folder_icon, music_icon):
@@ -39,18 +38,15 @@ class TopBar(ctk.CTkFrame):
 
         self.yami = ctk.CTkButton(
             self,
-            text="Yami",
+            text="About",
             font=("roboto", 15),
             width=70,
             image=music_icon,
-            command=multiprocessing.Process(target=BeatsGame,daemon=False).start
         )
 
         # WIDGET PLACEMENT
         self.open_folder.grid(row=0, column=1, sticky="w", pady=5, padx=10)
-        self.music_downloader.grid(
-            row=0, column=2, sticky="w", pady=5, padx=10
-        )
+        self.music_downloader.grid(row=0, column=2, sticky="w", pady=5, padx=10)
         self.yami.grid(row=0, column=3, sticky="w", pady=5, padx=10)
 
         # BINDINGS
@@ -70,9 +66,7 @@ class TopBar(ctk.CTkFrame):
 
         # FILTER MUSIC FILES
         for root, _, files in os.walk(self.parent.current_folder):
-            music_files = [
-                file for file in files if file.endswith(SUPPORTED_FORMATS)
-            ]
+            music_files = [file for file in files if file.endswith(SUPPORTED_FORMATS)]
 
             for file in music_files:
                 file_path = os.path.join(root, file)

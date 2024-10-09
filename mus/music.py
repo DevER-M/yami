@@ -34,9 +34,7 @@ class MusicPlayer(ctk.CTk):
         self.current_folder = ""
         self.playlist_index = 0
         self.loop = loop if loop is not None else asyncio.new_event_loop()
-        self.downloader = spotdl.Downloader(
-            spotdl.DownloaderOptions(threads=4)
-        )
+        self.downloader = spotdl.Downloader(spotdl.DownloaderOptions(threads=4))
         spotdl.SpotifyClient.init(
             "5f573c9620494bae87890c0f08a60293",
             "212476d9b0f3472eaa762d90b19b0ba8",
@@ -90,9 +88,7 @@ class MusicPlayer(ctk.CTk):
             song_min = int(self.song_length // 60)
             song_sec = int(self.song_length % 60)
 
-            time_string = (
-                f"{minutes:02d}:{seconds:02d} / {song_min:02d}:{song_sec:02d}"
-            )
+            time_string = f"{minutes:02d}:{seconds:02d} / {song_min:02d}:{song_sec:02d}"
             self.control_bar.playback_label.configure(text=time_string)
 
             if song_position < self.song_length:
@@ -130,9 +126,7 @@ class MusicPlayer(ctk.CTk):
             self.bottom_frame.start_progress_bar(
                 self.get_song_length(self.playlist[index]),
             )
-            logging.info(
-                f"playing {self.get_song_title(self.playlist[index])}"
-            )
+            logging.info(f"playing {self.get_song_title(self.playlist[index])}")
 
         except Exception as e:
             logging.error(e)
