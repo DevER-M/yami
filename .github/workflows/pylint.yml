@@ -13,7 +13,7 @@ jobs:
          python -m pip install --upgrade pip
             pip install pylint
             pip install umsgpack
-            pip install cryptography
+            pip install cryptography customtkinter
             pip install pylint-fail-under
       - name: Analyse code
         run: |
