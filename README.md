@@ -1,6 +1,6 @@
 # How to install
 
-*    `git clone https://github.com/Code-Theft-Auto/yami.git`
+*    `git clone https://github.com/DevER-M/yami.git`
 
 *    `cd yami`
 
