@@ -17,4 +17,4 @@ jobs:
             pip install pylint-fail-under
       - name: Analyse code
         run: |
-              for file in $(find . -name '*.py'); do pylint "$file" --fail-under=2.0; done
+              for file in $(find . -name '*.py'); do pylint "$file" --fail-under=5.0; done
