@@ -21,4 +21,4 @@ jobs:
         #fails the build if one file has pylint score below 7.0
       - name: Analyse code
         run: |
-              for file in */*.py; do pylint "$file" --fail-under=6.0; done
+              for file in $(find . -name '*.py'); do pylint "$file" --fail-under=6.0; done
