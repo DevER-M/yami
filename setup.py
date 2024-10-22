@@ -12,7 +12,7 @@ setup(
   name='yami-music-player',
   version='1.0.0',
   description="An open-source music player with simple UI" ,
-  long_description=open('README.md').read() + '\n\n' + open('CHANGELOG.md').read(),
+  long_description=open('README.md').read() + '\n\n' ,##+ open('CHANGELOG.md').read(),
   long_description_content_type="text/markdown",
   url='https://github.com/DevER-M/yami',  
   author='Mithun',
