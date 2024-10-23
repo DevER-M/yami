@@ -24,16 +24,20 @@ classifiers = [
   "License :: OSI Approved :: GPL License",
   "Programming Language :: Python :: 3"
 ]
+dynamic = ["dependencies"]
+
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
 
+[tool.setuptools]
+include-package-data = true
+
 [tool.setuptools.packages.find]
-where = ["."]  # list of folders that contain the packages (["."] by default)
-include = ["pic/"]  # package names should match these glob patterns (["*"] by default)
-exclude = [] 
+where=["."]
 
 [tool.setuptools.package-data]
-pic = ["pic/*"]
+yami = ["./pic/*"]
 
 [project.scripts]
-yami = "yami:main"
+yami = "yami:_main__"
+
