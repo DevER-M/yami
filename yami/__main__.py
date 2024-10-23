@@ -1,7 +1,7 @@
 """Entry point"""
 
 import logging
-from mus.music import MusicPlayer
+from yami.music import MusicPlayer
 
 
 logging.getLogger().setLevel(logging.INFO)
