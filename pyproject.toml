@@ -8,7 +8,7 @@ version = "1.0.0"
 description="An open-source music player with simple UI"
 readme = "README.md"
 requires-python = ">=3.8"
-license = {file = "LICENSE.txt"}
+license = {file = "LICENSE"}
 keywords = ["tkinter","youtube-music-player","spotdl","online-music-player","customtkinter","youtube-dl"]
 authors = [
     {name = "Mithun", email="mg.a54@proton.me"}
