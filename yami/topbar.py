@@ -83,6 +83,7 @@ class TopBar(ctk.CTkFrame):
                 self.parent.playlist_frame.song_list.insert(
                     "end", f"• {Path(file).stem}"
                 )
+        os.chdir(self.parent.current_folder)
 
     def prompt_download(self):
         if not self.parent.current_folder:
