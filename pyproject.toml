@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "yami-music-player"
-version = "1.0.0"
+version = "1.0.1"
 description="An open-source music player with simple UI"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -36,7 +36,7 @@ include-package-data = true
 where=["."]
 
 [tool.setuptools.package-data]
-yami = ["./pic/*"]
+yami = ["./data/*"]
 
 [project.scripts]
 yami = "yami:__main__"
