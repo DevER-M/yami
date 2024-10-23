@@ -26,3 +26,14 @@ classifiers = [
 ]
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
+
+[tool.setuptools.packages.find]
+where = ["."]  # list of folders that contain the packages (["."] by default)
+include = ["pic/"]  # package names should match these glob patterns (["*"] by default)
+exclude = [] 
+
+[tool.setuptools.package-data]
+pic = ["pic/*"]
+
+[project.scripts]
+yami = "yami:main"
