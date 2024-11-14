@@ -13,4 +13,4 @@
 * `python run.py`
 
 ## Screenshot
-![pic](pic/pic.png)
+![pic](.assets/pic.png)
