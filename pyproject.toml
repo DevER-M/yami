@@ -39,5 +39,5 @@ where=["."]
 yami = ["./data/*"]
 
 [project.scripts]
-yami = "yami:main"
+yami = "yami.main:entry"
 
