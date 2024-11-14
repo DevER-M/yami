@@ -92,7 +92,6 @@ class TopBar(ctk.CTkFrame):
             "Download Music", "Enter the name of the song:"
         )
         if song_url:
-            self.music_downloader.configure(state="disabled")
             self.parent.loop.create_task(self.download_song(song_url))
 
     async def download_song(self, song_url):
@@ -108,7 +107,7 @@ class TopBar(ctk.CTkFrame):
             )
             await asyncio.sleep(0)  # STOP FROM FREEZING
             logging.info("saving file")
-            downloaded_song_path = os.path.join(
+            self.downloaded_song_path = os.path.join(
                 self.parent.current_folder,
                 spotdl.utils.formatter.create_file_name(
                     song=song,
@@ -120,13 +119,11 @@ class TopBar(ctk.CTkFrame):
                     ],
                 ),
             )
-            logging.info("saved at %s", downloaded_song_path)
+            logging.info("saved at %s", self.downloaded_song_path)
         except Exception as e:
             logging.error(e)
-        finally:
-            self.music_downloader.configure(state="normal")
 
-        self.parent.playlist.append(downloaded_song_path)
+        self.parent.playlist.append(self.downloaded_song_path)
         self.parent.playlist_frame.song_list.insert(
-            "end", f"• {Path(downloaded_song_path).stem}"
+            "end", f"• {Path(self.downloaded_song_path).stem}"
         )
