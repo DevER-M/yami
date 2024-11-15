@@ -11,7 +11,7 @@
 </h3>
 
 <p align="center">
-Download or play local music without ads!   
+Download or play music locally without ads!   
 </p>
 
 [Installation](#installation) • [Usage](#usage) • [Features](#features) • [Testing](#testing) • [Contributing](#contributing) • [License](#license)
@@ -48,7 +48,29 @@ pip install -e .
 
 
 
+# Usage
 
+To run `yami`, use the following command in your terminal:
+
+```sh
+$ yami 
+# Or
+$ python -m yami
+```
+
+## Features
+
+- **Spotdl Integration:** Download music directly from the app using spotdl
+  - **Asynchronous Downloading :** From synchronous `spotdl.Downloader.search_and_download()`
+- **Player Controls:**
+  - **<img src="data/pause.png" alt="drawing" width="30" style="vertical-align:bottom"> :** Pause/play music
+  - **<img src="data/skip_next.png" alt="drawing" width="30" style="vertical-align:bottom"> :** Play next song
+  - **<img src="data/skip_prev.png" alt="drawing" width="30" style="vertical-align:bottom"> :** Play previous song
+  - **<img src="data/folder.png" alt="drawing" width="30" style="vertical-align:bottom"> :** Choose folder
+  - **<img src="data/music.png" alt="drawing" width="30" style="vertical-align:bottom"> :** Download music
+  - **`ctrl+o` :** Choose folder
+
+This will open the app, for the logs check the terminal.
 
 
 
