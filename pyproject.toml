@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "yami-music-player"
+version = "1.0.0"
+description="An open-source music player with simple UI"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {file = "LICENSE"}
+keywords = [
+  "tkinter",
+  "youtube-music-player",
+  "spotdl",
+  "online-music-player",
+  "customtkinter",
+  "youtube-dl"]
+authors = [{name = "Mithun", email="mg.a54@proton.me"}]
+maintainers = [{name = "Mithun", email="mg.a54@proton.me"}]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: End Users/Desktop",
+  "Operating System :: OS Independent",
+  "License :: OSI Approved :: GNU General Public License (GPL)",
+  "Programming Language :: Python :: 3"
+]
+dynamic = ["dependencies"]
+
+[project.urls]
+Documentation = "https://github.com/dever-m/yami/blob/main/README.md"
+"Bug Tracker" = "https://github.com/dever-m/yami/issues"
+"Source code" = "https://github.com/dever-m/yami"
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where=["."]
+
+[tool.setuptools.package-data]
+yami = ["./data/*"]
+
+[project.scripts]
+yami = "yami.main:entry"
+

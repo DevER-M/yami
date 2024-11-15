@@ -1,6 +1,6 @@
 # How to install
 
-*    `git clone https://github.com/Code-Theft-Auto/yami.git`
+*    `git clone https://github.com/DevER-M/yami.git`
 
 *    `cd yami`
 
@@ -13,4 +13,4 @@
 * `python run.py`
 
 ## Screenshot
-![pic](pic/pic.png)
+![pic](https://raw.githubusercontent.com/DevER-M/yami/refs/heads/for-pypi/.assets/pic.png)

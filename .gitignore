@@ -8,3 +8,8 @@ __pycache__
 */__pycache__
 *.mp4
 *.mov
+.tve
+.testvenv
+token
+*.egg-info
+dist

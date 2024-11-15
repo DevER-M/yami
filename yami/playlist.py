@@ -16,7 +16,7 @@ class PlaylistFrame(ctk.CTkFrame):
             borderwidth=10,
             activestyle="none",
             width=34,
-            height=18,
+            height=16,
             relief="flat",
             bg="#141414",
             fg="#e0e0e0",

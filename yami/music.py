@@ -20,7 +20,7 @@ from .progress import BottomFrame
 from .util import GEOMETRY, TITLE, PlayerState, EVENT_INTERVAL
 
 
-ctk.set_default_color_theme("theme.json")
+ctk.set_default_color_theme("data/theme.json")
 ctk.set_appearance_mode("dark")
 
 
@@ -240,12 +240,12 @@ class MusicPlayer(ctk.CTk):
                 self.play_next_song()
 
     def setup_icons(self):
-        self.play_icon = ctk.CTkImage(Image.open("pic/play_arrow.png"))
-        self.pause_icon = ctk.CTkImage(Image.open("pic/pause.png"))
-        self.prev_icon = ctk.CTkImage(Image.open("pic/skip_prev.png"))
-        self.next_icon = ctk.CTkImage(Image.open("pic/skip_next.png"))
-        self.folder_icon = ctk.CTkImage(Image.open("pic/folder.png"))
-        self.music_icon = ctk.CTkImage(Image.open("pic/music.png"))
+        self.play_icon = ctk.CTkImage(Image.open("data/play_arrow.png"))
+        self.pause_icon = ctk.CTkImage(Image.open("data/pause.png"))
+        self.prev_icon = ctk.CTkImage(Image.open("data/skip_prev.png"))
+        self.next_icon = ctk.CTkImage(Image.open("data/skip_next.png"))
+        self.folder_icon = ctk.CTkImage(Image.open("data/folder.png"))
+        self.music_icon = ctk.CTkImage(Image.open("data/music.png"))
         logging.info("icons setup")
 
     def setup_bindings(self):
