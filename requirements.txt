@@ -1,4 +1,4 @@
-customtkinter 
+customtkinter @ git+https://github.com/ElSaico/CustomTkinter.git@c056dddbbbac5d1daf74595b6ce02c7b17f32306
 mutagen==1.47.0
 Pillow==11.0.0
 pygame==2.6.1
