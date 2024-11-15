@@ -14,8 +14,11 @@
 Download or play music locally without ads!   
 </p>
 
-[Installation](#installation) • [Usage](#usage) • [Features](#features) • [Testing](#testing) • [Contributing](#contributing) • [License](#license)
+[Installation](#installation) • [Usage](#usage) • [Features](#features) • [Contributing](#contributing) • [License](#license)
 </div>
+
+## Screenshot
+![pic](https://raw.githubusercontent.com/DevER-M/yami/refs/heads/for-pypi/.assets/pic.png)
 
 
 ## 🛠️ Getting Started
@@ -72,12 +75,27 @@ $ python -m yami
 
 This will open the app, for the logs check the terminal.
 
+# Contributing
+
+Contributions are welcome and greatly appreciated! Here's how you can contribute:
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+# License
+
+Distributed under the GPLV3 License. See [`LICENSE`](LICENSE) for more information.
+
+
+# Credits
+- [Custom Tkinter](https://github.com/TomSchimansky/CustomTkinter)
+- [Spotdl](https://github.com/spotDL/spotify-downloader)
+- [@ElSaico](https://github.com/ElSaico) for fixing [locale scaling](https://github.com/ElSaico/CustomTkinter/tree/fix-locale-scaling)
 
 
 
 
-
-
-## Screenshot
-![pic](https://raw.githubusercontent.com/DevER-M/yami/refs/heads/for-pypi/.assets/pic.png)
 
