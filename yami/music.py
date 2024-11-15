@@ -5,10 +5,11 @@ import tkinter as tk
 import tempfile
 import asyncio
 import logging
+import os
 
 from mutagen import File, id3
 import customtkinter as ctk
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw,ImageTk
 import spotdl
 import pygame
 
@@ -35,6 +36,9 @@ class MusicPlayer(ctk.CTk):
         self.geometry(GEOMETRY)
         self.title(TITLE)
         self.attributes("-alpha", 0.4)
+        self.iconpath = ImageTk.PhotoImage(file=os.path.join(".assets","default.png"))
+        self.wm_iconbitmap()
+        self.iconphoto(False, self.iconpath)
 
         # STATE
         self.playlist = []
@@ -235,6 +239,7 @@ class MusicPlayer(ctk.CTk):
 
     # AUTOPLAY NEXT SONG AFTER SONG ENDS
     def check_for_events(self):
+        pygame.display.init()
         for event in pygame.event.get():
             if event.type == pygame.USEREVENT:
                 self.play_next_song()
