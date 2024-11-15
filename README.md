@@ -1,6 +1,6 @@
 <div align="center">
 
-![yami-logo](.assets/vector/default-monochrome-black.svg)
+![yami-logo](https://github.com/DevER-M/yami/blob/main/.assets/vector/default-monochrome-black.svg?raw=true)
 ---
 ![Static Badge](https://img.shields.io/badge/pip_install-yami--music--player-purple)
 ![Static Badge](https://img.shields.io/badge/Language-Python-red)
@@ -22,8 +22,8 @@ Download or play music locally without ads!
 
 ## 📸Screenshot
 <div align="center">
-<img align="center" src="https://raw.githubusercontent.com/DevER-M/yami/refs/heads/for-pypi/.assets/pic.png">
-<img align="center" src=".assets/example.gif">
+<img align="center" src="https://github.com/DevER-M/yami/blob/main/.assets/pic.png?raw=true">
+<img align="center" src="https://github.com/DevER-M/yami/blob/main/.assets/example.gif?raw=true">
 </div>
 
 
@@ -74,11 +74,11 @@ $ python -m yami
 - **Spotdl Integration:** Download music directly from the app using spotdl
   - **Asynchronous Downloading :** From synchronous `spotdl.Downloader.search_and_download()`
 - **Player Controls:**
-  - **<img src="data/pause.png" alt="drawing" width="30" style="vertical-align:bottom"> :** Pause/play music
-  - **<img src="data/skip_next.png" alt="drawing" width="30" style="vertical-align:bottom"> :** Play next song
-  - **<img src="data/skip_prev.png" alt="drawing" width="30" style="vertical-align:bottom"> :** Play previous song
-  - **<img src="data/folder.png" alt="drawing" width="30" style="vertical-align:bottom"> :** Choose folder
-  - **<img src="data/music.png" alt="drawing" width="30" style="vertical-align:bottom"> :** Download music
+  - **<img src="https://github.com/DevER-M/yami/blob/main/data/pause.png?raw=true" alt="drawing" width="30" style="vertical-align:bottom"> :** Pause/play music
+  - **<img src="https://github.com/DevER-M/yami/blob/main/data/skip_next.png?raw=true" alt="drawing" width="30" style="vertical-align:bottom"> :** Play next song
+  - **<img src="https://github.com/DevER-M/yami/blob/main/data/skip_prev.png?raw=true" alt="drawing" width="30" style="vertical-align:bottom"> :** Play previous song
+  - **<img src="https://github.com/DevER-M/yami/blob/main/data/folder.png?raw=true" alt="drawing" width="30" style="vertical-align:bottom"> :** Choose folder
+  - **<img src="https://github.com/DevER-M/yami/blob/main/data/music.png?raw=true" alt="drawing" width="30" style="vertical-align:bottom"> :** Download music
   - **`ctrl+o` :** Choose folder
 
 This will open the app, for the logs check the terminal.
