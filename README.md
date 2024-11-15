@@ -17,8 +17,16 @@ Download or play music locally without ads!
 [Installation](#installation) • [Usage](#usage) • [Features](#features) • [Contributing](#contributing) • [License](#license)
 </div>
 
-## Screenshot
-![pic](https://raw.githubusercontent.com/DevER-M/yami/refs/heads/for-pypi/.assets/pic.png)
+## 🔍Overview
+`Yami` is a lightweight, open-source music player built in Python. It focuses on simplicity and ease of use, providing an intuitive user interface (UI) for users to manage and play their music. Whether you're playing local files or downloading from online sources using spotdl, Yami offers a seamless experience. This project is designed for users who want a minimalistic, cross-platform music player with the ability to integrate external sources like Spotify/Youtube Music.
+
+## 📸Screenshot
+<div align="center">
+<img align="center" src="https://raw.githubusercontent.com/DevER-M/yami/refs/heads/for-pypi/.assets/pic.png">
+<img align="center" src=".assets/example.gif">
+</div>
+
+
 
 
 ## 🛠️ Getting Started
@@ -94,6 +102,9 @@ Distributed under the GPLV3 License. See [`LICENSE`](LICENSE) for more informati
 - [Custom Tkinter](https://github.com/TomSchimansky/CustomTkinter)
 - [Spotdl](https://github.com/spotDL/spotify-downloader)
 - [@ElSaico](https://github.com/ElSaico) for fixing [locale scaling](https://github.com/ElSaico/CustomTkinter/tree/fix-locale-scaling)
+
+## Star History
+[![Star History Chart](https://api.star-history.com/svg?repos=DevER-M/yami&type=Date)](https://star-history.com/#iamDyeus/tkreload&Date)
 
 
 
