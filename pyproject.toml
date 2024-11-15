@@ -15,7 +15,9 @@ keywords = [
   "spotdl",
   "online-music-player",
   "customtkinter",
-  "youtube-dl"]
+  "youtube-dl",
+  "music-player",
+  "spotify"]
 authors = [{name = "Mithun", email="mg.a54@proton.me"}]
 maintainers = [{name = "Mithun", email="mg.a54@proton.me"}]
 classifiers = [
