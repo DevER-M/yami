@@ -104,7 +104,7 @@ Distributed under the GPLV3 License. See [`LICENSE`](LICENSE) for more informati
 - [@ElSaico](https://github.com/ElSaico) for fixing [locale scaling](https://github.com/ElSaico/CustomTkinter/tree/fix-locale-scaling)
 
 ## Star History
-[![Star History Chart](https://api.star-history.com/svg?repos=DevER-M/yami&type=Date)]([https://star-history.com/DevER-M/yami&type=Date](https://api.star-history.com/svg?repos=DevER-M/yami&type=Date))
+[![Star History Chart](https://api.star-history.com/svg?repos=DevER-M/yami&type=Date)](https://api.star-history.com/svg?repos=DevER-M/yami&type=Date)
 
 
 
