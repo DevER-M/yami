@@ -97,6 +97,10 @@ Contributions are welcome and greatly appreciated! Here's how you can contribute
 
 Distributed under the GPLV3 License. See [`LICENSE`](LICENSE) for more information.
 
+# Discussions
+
+Discussions are available and can be used for feature requests and questions
+
 
 # Credits
 - [Custom Tkinter](https://github.com/TomSchimansky/CustomTkinter)
