@@ -5,6 +5,7 @@
 ![Static Badge](https://img.shields.io/badge/pip_install-yami--music--player-purple)
 ![Static Badge](https://img.shields.io/badge/Language-Python-red)
 ![GitHub last commit](https://img.shields.io/github/last-commit/DevER-M/yami)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/yami-music-player)
 
 <h3>
 <code>yami</code> | An open-source music player with simple UI
