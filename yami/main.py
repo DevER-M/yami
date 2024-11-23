@@ -9,3 +9,6 @@ logging.getLogger().setLevel(logging.INFO)
 def entry():
     app = MusicPlayer()
     app.mainloop()
+
+if __name__=="__main__":
+    entry()

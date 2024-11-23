@@ -1,2 +1,2 @@
-recursive-include data *
+recursive-include yami/data *
 recursive-include .assets *

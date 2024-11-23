@@ -5,11 +5,11 @@ import tkinter as tk
 import tempfile
 import asyncio
 import logging
-import os
+
 
 from mutagen import File, id3
 import customtkinter as ctk
-from PIL import Image, ImageDraw,ImageTk
+from PIL import Image, ImageDraw
 import spotdl
 import pygame
 
@@ -21,7 +21,7 @@ from .progress import BottomFrame
 from .util import GEOMETRY, TITLE, PlayerState, EVENT_INTERVAL
 
 
-ctk.set_default_color_theme("data/theme.json")
+ctk.set_default_color_theme("yami/data/theme.json")
 ctk.set_appearance_mode("dark")
 
 
@@ -35,10 +35,6 @@ class MusicPlayer(ctk.CTk):
         # CONFIG
         self.geometry(GEOMETRY)
         self.title(TITLE)
-        self.attributes("-alpha", 0.4)
-        self.iconpath = ImageTk.PhotoImage(file=os.path.join(".assets","default.png"))
-        self.wm_iconbitmap()
-        self.iconphoto(False, self.iconpath)
 
         # STATE
         self.playlist = []
@@ -245,12 +241,12 @@ class MusicPlayer(ctk.CTk):
                 self.play_next_song()
 
     def setup_icons(self):
-        self.play_icon = ctk.CTkImage(Image.open("data/play_arrow.png"))
-        self.pause_icon = ctk.CTkImage(Image.open("data/pause.png"))
-        self.prev_icon = ctk.CTkImage(Image.open("data/skip_prev.png"))
-        self.next_icon = ctk.CTkImage(Image.open("data/skip_next.png"))
-        self.folder_icon = ctk.CTkImage(Image.open("data/folder.png"))
-        self.music_icon = ctk.CTkImage(Image.open("data/music.png"))
+        self.play_icon = ctk.CTkImage(Image.open("yami/data/play_arrow.png"))
+        self.pause_icon = ctk.CTkImage(Image.open("yami/data/pause.png"))
+        self.prev_icon = ctk.CTkImage(Image.open("yami/data/skip_prev.png"))
+        self.next_icon = ctk.CTkImage(Image.open("yami/data/skip_next.png"))
+        self.folder_icon = ctk.CTkImage(Image.open("yami/data/folder.png"))
+        self.music_icon = ctk.CTkImage(Image.open("yami/data/music.png"))
         logging.info("icons setup")
 
     def setup_bindings(self):
