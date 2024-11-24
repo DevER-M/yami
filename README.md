@@ -75,11 +75,11 @@ $ python -m yami
 - **Spotdl Integration:** Download music directly from the app using spotdl
   - **Asynchronous Downloading :** From synchronous `spotdl.Downloader.search_and_download()`
 - **Player Controls:**
-  - **<img src="https://github.com/DevER-M/yami/blob/main/data/pause.png?raw=true" alt="drawing" width="30" style="vertical-align:bottom"> :** Pause/play music
-  - **<img src="https://github.com/DevER-M/yami/blob/main/data/skip_next.png?raw=true" alt="drawing" width="30" style="vertical-align:bottom"> :** Play next song
-  - **<img src="https://github.com/DevER-M/yami/blob/main/data/skip_prev.png?raw=true" alt="drawing" width="30" style="vertical-align:bottom"> :** Play previous song
-  - **<img src="https://github.com/DevER-M/yami/blob/main/data/folder.png?raw=true" alt="drawing" width="30" style="vertical-align:bottom"> :** Choose folder
-  - **<img src="https://github.com/DevER-M/yami/blob/main/data/music.png?raw=true" alt="drawing" width="30" style="vertical-align:bottom"> :** Download music
+  - **<img src="https://github.com/DevER-M/yami/blob/main/yami/data/pause.png?raw=true" alt="drawing" width="30" style="vertical-align:bottom"> :** Pause/play music
+  - **<img src="https://github.com/DevER-M/yami/blob/main/yami/data/skip_next.png?raw=true" alt="drawing" width="30" style="vertical-align:bottom"> :** Play next song
+  - **<img src="https://github.com/DevER-M/yami/blob/main/yami/data/skip_prev.png?raw=true" alt="drawing" width="30" style="vertical-align:bottom"> :** Play previous song
+  - **<img src="https://github.com/DevER-M/yami/blob/main/yami/data/folder.png?raw=true" alt="drawing" width="30" style="vertical-align:bottom"> :** Choose folder
+  - **<img src="https://github.com/DevER-M/yami/blob/main/yami/data/music.png?raw=true" alt="drawing" width="30" style="vertical-align:bottom"> :** Download music
   - **`ctrl+o` :** Choose folder
 
 This will open the app, for the logs check the terminal.
