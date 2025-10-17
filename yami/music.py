@@ -226,7 +226,7 @@ class MusicPlayer(ctk.CTk):
         return pygame.mixer.music.get_pos() / 1000
 
     def initialize_pygame(self):
-        pygame.init()
+        #pygame.init()
         pygame.mixer.init()
         self.music = pygame.mixer.music
 
