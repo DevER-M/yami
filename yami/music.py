@@ -11,7 +11,9 @@ from mutagen import File, id3
 import customtkinter as ctk
 from PIL import Image, ImageDraw
 import spotdl
-import pygame
+import vlc
+
+
 
 from .topbar import TopBar
 from .playlist import PlaylistFrame
@@ -37,7 +39,7 @@ class MusicPlayer(ctk.CTk):
         self.title(TITLE)
 
         # STATE
-        self.playlist = []
+        self.playlist = [] 
         self.STATE = PlayerState.STOPPED
         self.current_folder = ""
         self.playlist_index = 0
@@ -51,7 +53,7 @@ class MusicPlayer(ctk.CTk):
         )
 
         # SETUP PYGAME
-        self.initialize_pygame()
+        self.initialize_vlc()
 
         # ICONS
         self.setup_icons()
@@ -78,15 +80,23 @@ class MusicPlayer(ctk.CTk):
         self.update_loop()
 
     def update(self):
-        if self.STATE == PlayerState.PLAYING:
+        if self.music.get_state()== vlc.State.Opening:
+            self.after(EVENT_INTERVAL, self.update)
+
+        
+        if self.music.get_state() == vlc.State.Playing:
             song_position = self.get_song_position()
+            self.song_length=self.music.get_length()//1000
+            
+            curtime=song_position*self.music.get_length()//1000
+            #print(curtime,song_position,self.music.get_length())
 
             # GETS RATIO OF PROGRESS
-            progress = song_position / self.song_length
-            self.bottom_frame.progress_bar.set(progress)
+            #progress = song_position / self.song_length
+            self.bottom_frame.progress_bar.set(song_position)
 
-            minutes = int(song_position // 60)
-            seconds = int(song_position % 60)
+            minutes = int(curtime // 60)  # logic wrong 
+            seconds = int(curtime % 60)
 
             song_min = int(self.song_length // 60)
             song_sec = int(self.song_length % 60)
@@ -96,12 +106,13 @@ class MusicPlayer(ctk.CTk):
             )
             self.control_bar.playback_label.configure(text=time_string)
 
-            if song_position < self.song_length:
-                self.after(EVENT_INTERVAL, self.update)
+            #if self.music.get_state()==vlc.State.Ended: # check is still song is not over or not song position less than song length means not yet reached end
+             #   print("hi")
+            self.after(EVENT_INTERVAL, self.update)
+        elif self.music.get_state()==vlc.State.Ended:
+            self.play_next_song()
 
-            self.check_for_events()
-
-        elif self.STATE == PlayerState.PAUSED:
+        elif self.music.get_state() == vlc.State.Paused:
             self.after(EVENT_INTERVAL, self.update)
         else:
             self.bottom_frame.progress_bar.set(0)
@@ -109,34 +120,37 @@ class MusicPlayer(ctk.CTk):
     def load_and_play_song(self, index):
         try:
             # MUSIC
-            self.music.unload()
-            self.music.stop()
-            self.music.load(self.playlist[index])
+            #self.music.unload()
+            #self.music.stop()
+            self.media=vlc.Media(self.playlist[index])
+            self.music.set_media(self.media)
+            #self.music.load(self.playlist[index])
             self.music.play()
-            self.STATE = PlayerState.PLAYING
+            #self.STATE = PlayerState.PLAYING
             self.playlist_index = index
 
             # CHANGE INFO
-            cover_image = self.get_album_cover(self.playlist[index])
+            cover_image = self.get_album_cover()
             self.cover_art_frame.cover_art_label.configure(
                 require_redraw=True, image=cover_image, fg_color="#121212"
             )
 
-            self.control_bar.set_music_title(
-                self.get_song_title(self.playlist[index]),
-                self.get_song_artist(self.playlist[index]),
+            self.control_bar.set_music_title(   # truncates longer titles
+                self.get_song_title(),
+                self.get_song_artist(),
             )
-            self.control_bar.update_play_button(self.STATE)
+            self.control_bar.update_play_button()
 
             self.bottom_frame.start_progress_bar(
                 self.get_song_length(self.playlist[index]),
             )
             logging.info(
-                "playing %s", self.get_song_title(self.playlist[index])
+                "playing %s", self.get_song_title()
             )
+            
 
         except Exception as e:
-            logging.error(e)
+            logging.exception(e)
 
     def play_next_song(self, _event=None):
         if not self.playlist:
@@ -155,24 +169,27 @@ class MusicPlayer(ctk.CTk):
         logging.info("playing next song")
 
     def get_song_length(self, file_path):
-        audio = File(file_path)
+        '''audio = File(file_path)
         if audio is not None and audio.info is not None:
             return audio.info.length
-        return 0
+        return 0'''
+        return self.music.get_length()
 
-    def get_song_title(self, file_path):
+    def get_song_title(self):
         try:
-            # NO TITLE METADATA
-            if not file_path.endswith(".mp3"):
-                return Path(file_path).stem
-
-            audio = id3.ID3(file_path)
-            return audio["TIT2"].text[0]
-        except:
+            if self.media.is_parsed():
+                return self.media.get_meta(0)
+            else:
+                self.media.parse()
+                return self.media.get_meta(0)
+        except Exception as e:
+            logging.exception(e)
             return ""
 
-    def get_album_cover(self, file_path):
-        if not file_path.endswith(".mp3"):
+        
+
+    def get_album_cover(self):
+        """if not file_path.endswith(".mp3"):
             return
         try:
             audio_file = id3.ID3(file_path)
@@ -198,7 +215,22 @@ class MusicPlayer(ctk.CTk):
             return
         except Exception as e:
             logging.error(e)
+            return"""
+         # gives the direct uri to cover jpg
+        try:
+            self.media.parse()
+            print(self.media.get_meta(15))
+            return ctk.CTkImage(
+                self.round_corners(
+                    Image.open(Path.from_uri(self.media.get_meta(15))),
+                        20),
+                size=(250,250)
+            )
+        except Exception as e:
+            logging.exception(e)
             return
+        return
+        
 
     # ROUNDS ALBUM COVER
     def round_corners(self, image, radius):
@@ -211,34 +243,40 @@ class MusicPlayer(ctk.CTk):
 
         return rounded_image
 
-    def get_song_artist(self, filepath):
+    def get_song_artist(self):
         try:
-            if not filepath.endswith(".mp3"):
-                return "Unknown"
-
-            audio = id3.ID3(filepath)
-            return audio["TPE1"].text[0]
-        except Exception as e:
-            logging.error(e)
-            return "Unknown"
+            if self.media.is_parsed():
+                return self.media.get_meta(1)
+            else:
+                self.media.parse()
+                return self.media.get_meta(1)
+        except exception as e:
+            logging.exception(e)
+            return ""
 
     def get_song_position(self):
-        return pygame.mixer.music.get_pos() / 1000
+        return self.music.get_position()
 
-    def initialize_pygame(self):
+    def initialize_vlc(self):
         #pygame.init()
-        pygame.mixer.init()
-        self.music = pygame.mixer.music
+        #pygame.mixer.init()
+        self.vlc_instance=vlc.Instance()
+        self.music=vlc.MediaPlayer()
+        
+        #self.music = pygame.mixer.music
 
         # CREATE USEREVENT WHEN MUSIC ENDS
-        pygame.mixer.music.set_endevent(pygame.USEREVENT)
+        #pygame.mixer.music.set_endevent(pygame.USEREVENT)
 
     # AUTOPLAY NEXT SONG AFTER SONG ENDS
     def check_for_events(self):
-        pygame.display.init()
-        for event in pygame.event.get():
-            if event.type == pygame.USEREVENT:
-                self.play_next_song()
+        #pygame.display.init()
+        #for event in pygame.event.get():
+         #   if event.type == pygame.USEREVENT:
+          #      self.play_next_song()
+        print(self.music.get_state())
+        #if self.music.get_state() == vlc.State.Ended:
+         #   self.play_next_song()
 
     def setup_icons(self):
         self.play_icon = ctk.CTkImage(Image.open("yami/data/play_arrow.png"))

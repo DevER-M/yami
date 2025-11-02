@@ -3,6 +3,7 @@
 import tkinter as tk
 import logging
 import customtkinter as ctk
+import vlc
 from .util import BUTTON_WIDTH, PlayerState
 
 
@@ -82,20 +83,19 @@ class ControlBar(ctk.CTkFrame):
     def play_pause(self, event=None):
         """Plays Or Pauses The Music"""
 
-        if self.music_player.STATE == PlayerState.PLAYING:
+        if self.music_player.music.get_state() == vlc.State.Playing:
             self.music_player.music.pause()
-            self.music_player.STATE = PlayerState.PAUSED
             logging.info("paused")
         else:
-            self.music_player.music.unpause()
-            self.music_player.STATE = PlayerState.PLAYING
+            self.music_player.music.play()
+            
             logging.info("resumed")
-        self.update_play_button(self.music_player.STATE)
+        self.update_play_button()
 
-    def update_play_button(self, state):
+    def update_play_button(self):
         """Switches Play/Pause Icon"""
 
-        if state == PlayerState.PLAYING:
+        if self.music_player.music.get_state()==vlc.State.Playing:
             self.play_button.configure(image=self.pause_icon)
         else:
             self.play_button.configure(image=self.play_icon)

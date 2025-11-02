@@ -1,5 +1,5 @@
 customtkinter-fix-locale-scaling==5.2.2
 mutagen==1.47.0
-Pillow==11.0.0
+Pillow==12.0.0
 pygame==2.6.1
-spotdl==4.2.8
+spotdl==4.4.3
