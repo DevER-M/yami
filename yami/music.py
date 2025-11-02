@@ -40,7 +40,7 @@ class MusicPlayer(ctk.CTk):
 
         # STATE
         self.playlist = [] 
-        self.STATE = PlayerState.STOPPED
+        #self.STATE = PlayerState.STOPPED
         self.current_folder = ""
         self.playlist_index = 0
         self.loop = loop if loop is not None else asyncio.new_event_loop()
@@ -76,10 +76,12 @@ class MusicPlayer(ctk.CTk):
         self.cover_art_frame.pack(side=tk.LEFT, padx=10)
 
         # UPDATE LOOP
-        self.after(EVENT_INTERVAL, self.update)
-        self.update_loop()
+        #self.after(EVENT_INTERVAL, self.update)
+        event_manager=self.music.event_manager()
+        event_manager.event_attach(vlc.EventType.MediaPlayerPositionChanged,self.update_pos)
+        #self.update_loop()
 
-    def update(self):
+    def update(self,*args):
         if self.music.get_state()== vlc.State.Opening:
             self.after(EVENT_INTERVAL, self.update)
 
@@ -116,6 +118,23 @@ class MusicPlayer(ctk.CTk):
             self.after(EVENT_INTERVAL, self.update)
         else:
             self.bottom_frame.progress_bar.set(0)
+
+    
+    def update_pos(self,event=None):
+        song_position = self.get_song_position()
+        self.song_length=self.music.get_length()//1000 # can make this global
+        curtime=song_position*self.song_length//1000
+   
+        self.bottom_frame.progress_bar.set(song_position)
+
+        cur_minutes = int(curtime // 60)  
+        cur_seconds = int(curtime % 60)
+
+        song_min = int(self.song_length // 60)
+        song_sec = int(self.song_length % 60)
+
+        time_string = (f"{cur_minutes:02d}:{cur_seconds:02d} / {song_min:02d}:{song_sec:02d}")
+        self.control_bar.playback_label.configure(text=time_string)
 
     def load_and_play_song(self, index):
         try:
