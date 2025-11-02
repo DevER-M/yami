@@ -78,10 +78,12 @@ class MusicPlayer(ctk.CTk):
         # UPDATE LOOP
         #self.after(EVENT_INTERVAL, self.update)
         event_manager=self.music.event_manager()
-        event_manager.event_attach(vlc.EventType.MediaPlayerPositionChanged,self.update_pos)
+        event_manager.event_attach(vlc.EventType.MediaPlayerEndReached,self.play_next_song)
+        #event_manager.event_attach(vlc.EventType.MediaPlayerPositionChanged,self.update)
         #self.update_loop()
+        self.after(EVENT_INTERVAL,self.update)
 
-    def update(self,*args):
+    '''def update(self,*args):
         if self.music.get_state()== vlc.State.Opening:
             self.after(EVENT_INTERVAL, self.update)
 
@@ -117,24 +119,28 @@ class MusicPlayer(ctk.CTk):
         elif self.music.get_state() == vlc.State.Paused:
             self.after(EVENT_INTERVAL, self.update)
         else:
-            self.bottom_frame.progress_bar.set(0)
+            self.bottom_frame.progress_bar.set(0)'''
 
     
-    def update_pos(self,event=None):
-        song_position = self.get_song_position()
-        self.song_length=self.music.get_length()//1000 # can make this global
-        curtime=song_position*self.song_length//1000
-   
-        self.bottom_frame.progress_bar.set(song_position)
+    def update(self,event=None):
+        if self.music.get_state()==vlc.State.Playing:
+            song_position = self.get_song_position()
+            self.song_length=self.music.get_length()//1000 # can make this global
+            curtime=song_position*self.song_length
+            print(curtime,song_position,self.music.get_length())
+            
+    
+            self.bottom_frame.progress_bar.set(song_position)
 
-        cur_minutes = int(curtime // 60)  
-        cur_seconds = int(curtime % 60)
+            cur_minutes = int(curtime // 60)  
+            cur_seconds = int(curtime % 60)
 
-        song_min = int(self.song_length // 60)
-        song_sec = int(self.song_length % 60)
+            song_min = int(self.song_length // 60)
+            song_sec = int(self.song_length % 60)
 
-        time_string = (f"{cur_minutes:02d}:{cur_seconds:02d} / {song_min:02d}:{song_sec:02d}")
-        self.control_bar.playback_label.configure(text=time_string)
+            time_string = (f"{cur_minutes:02d}:{cur_seconds:02d} / {song_min:02d}:{song_sec:02d}")
+            self.control_bar.playback_label.configure(text=time_string)
+        self.after(EVENT_INTERVAL,self.update)
 
     def load_and_play_song(self, index):
         try:
@@ -172,8 +178,10 @@ class MusicPlayer(ctk.CTk):
             logging.exception(e)
 
     def play_next_song(self, _event=None):
+        print(_event)
         if not self.playlist:
             return
+        print("hi")
 
         # PLAY FROM BEGINING
         if self.playlist_index >= len(self.playlist) - 1:
@@ -288,14 +296,14 @@ class MusicPlayer(ctk.CTk):
         #pygame.mixer.music.set_endevent(pygame.USEREVENT)
 
     # AUTOPLAY NEXT SONG AFTER SONG ENDS
-    def check_for_events(self):
+    '''def check_for_events(self):
         #pygame.display.init()
         #for event in pygame.event.get():
          #   if event.type == pygame.USEREVENT:
           #      self.play_next_song()
         print(self.music.get_state())
         #if self.music.get_state() == vlc.State.Ended:
-         #   self.play_next_song()
+         #   self.play_next_song()'''
 
     def setup_icons(self):
         self.play_icon = ctk.CTkImage(Image.open("yami/data/play_arrow.png"))
@@ -312,10 +320,10 @@ class MusicPlayer(ctk.CTk):
         self.bind("<F9>", self.control_bar.play_pause)
         self.bind("<space>", self.control_bar.play_pause)
 
-    def update_loop(self):
+    '''def update_loop(self):
         self.loop.call_soon(self.loop.stop)
         self.loop.run_forever()
-        self.after(1000, self.update_loop)
+        self.after(1000, self.update_loop)'''
 
 
 if __name__ == "__main__":
