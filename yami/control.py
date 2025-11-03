@@ -72,9 +72,7 @@ class ControlBar(ctk.CTkFrame):
         self.grid_columnconfigure(4, weight=0)
 
         # PLACEMENT
-        self.music_title_label.grid(
-            row=0, column=0, sticky="w", padx=5, pady=10
-        )
+        self.music_title_label.grid(row=0, column=0, sticky="w", padx=5, pady=10)
         self.playback_label.grid(row=0, column=1, sticky="w", padx=5, pady=10)
         self.prev_button.grid(row=0, column=2, sticky="nsew", padx=5, pady=10)
         self.play_button.grid(row=0, column=3, sticky="nsew", padx=5, pady=10)
@@ -83,19 +81,19 @@ class ControlBar(ctk.CTkFrame):
     def play_pause(self, event=None):
         """Plays Or Pauses The Music"""
 
-        if self.music_player.music.get_state() == vlc.State.Playing:
-            self.music_player.music.pause()
+        if self.music_player.music_list_player.get_state() == vlc.State.Playing:
+            self.music_player.music_list_player.pause()
             logging.info("paused")
         else:
-            self.music_player.music.play()
-            
+            self.music_player.music_list_player.play()
+
             logging.info("resumed")
         self.update_play_button()
 
     def update_play_button(self):
         """Switches Play/Pause Icon"""
 
-        if self.music_player.music.get_state()==vlc.State.Playing:
+        if self.music_player.music_list_player.get_state() == vlc.State.Playing:
             self.play_button.configure(image=self.pause_icon)
         else:
             self.play_button.configure(image=self.play_icon)
@@ -103,7 +101,7 @@ class ControlBar(ctk.CTkFrame):
     def play_previous(self, event=None):
         """Play Previous Song/Goto Last Song"""
 
-        if not self.music_player.playlist:
+        """if not self.music_player.playlist:
             return
 
         # PLAY FROM END
@@ -116,7 +114,8 @@ class ControlBar(ctk.CTkFrame):
         else:
             self.music_player.playlist_index -= 1
             logging.info("playing previous")
-        self.music_player.load_and_play_song(self.music_player.playlist_index)
+        self.music_player.load_and_play_song(self.music_player.playlist_index)"""
+        self.music_player.music_list_player.previous()
 
         # UPDATE SELECTION
         self.music_player.playlist_frame.song_list.selection_clear(0, tk.END)

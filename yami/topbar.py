@@ -12,6 +12,7 @@ import spotdl.utils
 import spotdl.utils.formatter
 import spotdl.utils.search
 import spotdl
+import vlc
 
 from .util import SUPPORTED_FORMATS
 
@@ -51,9 +52,7 @@ class TopBar(ctk.CTkFrame):
 
         # WIDGET PLACEMENT
         self.open_folder.grid(row=0, column=1, sticky="w", pady=5, padx=10)
-        self.music_downloader.grid(
-            row=0, column=2, sticky="w", pady=5, padx=10
-        )
+        self.music_downloader.grid(row=0, column=2, sticky="w", pady=5, padx=10)
         self.yami.grid(row=0, column=3, sticky="w", pady=5, padx=10)
 
         # BINDINGS
@@ -69,17 +68,22 @@ class TopBar(ctk.CTkFrame):
 
         # CLEAR PLAYLIST AND LISTBOX
         self.parent.playlist_frame.song_list.delete(0, tk.END)
-        self.parent.playlist.clear()
+        # self.parent.playlist.clear()
+        self.parent.media_list: vlc.MediaList = (
+            self.parent.vlc_instance.media_list_new()
+        )
+        self.parent.music_list_player.set_media_list(self.parent.media_list)
+        vlc.MediaList.add_media
 
         # FILTER MUSIC FILES
         for root, _, files in os.walk(self.parent.current_folder):
-            music_files = [
-                file for file in files if file.endswith(SUPPORTED_FORMATS)
-            ]
+            music_files = [file for file in files if file.endswith(SUPPORTED_FORMATS)]
 
             for file in music_files:
                 file_path = os.path.join(root, file)
-                self.parent.playlist.append(file_path)
+                media = self.parent.vlc_instance.media_new(file_path)
+                print(media.get_mrl())
+                self.parent.media_list.add_media(media)
                 self.parent.playlist_frame.song_list.insert(
                     "end", f"• {Path(file).stem}"
                 )
