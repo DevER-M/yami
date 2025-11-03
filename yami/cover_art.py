@@ -1,6 +1,7 @@
 """Frame For Cover Art"""
 
 import customtkinter as ctk
+import logging
 
 
 class CoverArtFrame(ctk.CTkFrame):
@@ -22,3 +23,4 @@ class CoverArtFrame(ctk.CTkFrame):
         self.cover_art_label.grid(
             sticky="nsew",
         )
+        logging.debug("initialized covert art frame")

@@ -2,6 +2,7 @@
 
 import tkinter as tk
 import customtkinter as ctk
+import logging
 
 
 class PlaylistFrame(ctk.CTkFrame):
@@ -34,11 +35,13 @@ class PlaylistFrame(ctk.CTkFrame):
         self.song_list.config(yscrollcommand=self.scrollbar.set)
         self.song_list.bind("<Double-1>", self.play)
         self.song_list.bind("<Return>", self.play)
+        logging.debug("initialized playlist frame")
 
     # SELECTION CALLBACK
     def play(self, event):
         try:
             index = event.widget.curselection()[0]
+            logging.debug("selected index %s to play", index)
             self.parent.load_and_play_song(index)
-        except IndexError:
-            pass
+        except Exception as e:
+            logging.exception(e)
