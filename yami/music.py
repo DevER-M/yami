@@ -97,7 +97,7 @@ class MusicPlayer(ctk.CTk):
             self.get_song_artist(),
         )
         self.control_bar.update_play_button()
-
+        
     def play_next_song(self, _event=None):
         logging.debug("playing next song due to button press / keybind")
         self.music_list_player.next()
