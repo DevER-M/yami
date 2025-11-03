@@ -3,7 +3,8 @@
 import tkinter as tk
 import logging
 import customtkinter as ctk
-from .util import BUTTON_WIDTH, PlayerState
+import vlc
+from .util import BUTTON_WIDTH
 
 
 class ControlBar(ctk.CTkFrame):
@@ -16,12 +17,11 @@ class ControlBar(ctk.CTkFrame):
         super().__init__(parent, corner_radius=10, fg_color="#121212")
 
         # SETUP
-        self.music_player = parent
+        self.parent = parent
         self.pause_icon = parent.pause_icon
         self.play_icon = parent.play_icon
         self.prev_icon = parent.prev_icon
         self.next_icon = parent.next_icon
-        self.play_next_command = parent.play_next_song
         self.title_max_chars = 40
 
         # WIDGETS
@@ -36,7 +36,7 @@ class ControlBar(ctk.CTkFrame):
         )
         self.next_button = ctk.CTkButton(
             self,
-            command=self.play_next_command,
+            command=self.parent.play_next_song,
             width=BUTTON_WIDTH,
             text="",
             corner_radius=10,
@@ -47,7 +47,7 @@ class ControlBar(ctk.CTkFrame):
             text="",
             width=BUTTON_WIDTH,
             corner_radius=10,
-            command=self.play_previous,
+            command=self.parent.play_previous,
             image=self.prev_icon,
         )
         self.music_title_label = ctk.CTkLabel(
@@ -71,58 +71,33 @@ class ControlBar(ctk.CTkFrame):
         self.grid_columnconfigure(4, weight=0)
 
         # PLACEMENT
-        self.music_title_label.grid(
-            row=0, column=0, sticky="w", padx=5, pady=10
-        )
+        self.music_title_label.grid(row=0, column=0, sticky="w", padx=5, pady=10)
         self.playback_label.grid(row=0, column=1, sticky="w", padx=5, pady=10)
         self.prev_button.grid(row=0, column=2, sticky="nsew", padx=5, pady=10)
         self.play_button.grid(row=0, column=3, sticky="nsew", padx=5, pady=10)
         self.next_button.grid(row=0, column=4, sticky="nsew", padx=5, pady=10)
+        logging.debug("initialized control bar")
 
     def play_pause(self, event=None):
         """Plays Or Pauses The Music"""
 
-        if self.music_player.STATE == PlayerState.PLAYING:
-            self.music_player.music.pause()
-            self.music_player.STATE = PlayerState.PAUSED
-            logging.info("paused")
+        if self.parent.music_list_player.get_state() == vlc.State.Playing:
+            self.parent.music_list_player.pause()
+            logging.debug("paused")
         else:
-            self.music_player.music.unpause()
-            self.music_player.STATE = PlayerState.PLAYING
-            logging.info("resumed")
-        self.update_play_button(self.music_player.STATE)
+            self.parent.music_list_player.play()
+            logging.debug("resumed")
+        self.update_play_button()
 
-    def update_play_button(self, state):
+    def update_play_button(self):
         """Switches Play/Pause Icon"""
 
-        if state == PlayerState.PLAYING:
+        if self.parent.music_list_player.get_state() == vlc.State.Playing:
             self.play_button.configure(image=self.pause_icon)
+            logging.debug("updated play button to pause")
         else:
             self.play_button.configure(image=self.play_icon)
-
-    def play_previous(self, event=None):
-        """Play Previous Song/Goto Last Song"""
-
-        if not self.music_player.playlist:
-            return
-
-        # PLAY FROM END
-        if self.music_player.playlist_index == 0:
-            logging.info("playing from end")
-            self.music_player.playlist_index = (
-                len(self.music_player.playlist) - 1
-            )
-        # PLAY PREVIOUS
-        else:
-            self.music_player.playlist_index -= 1
-            logging.info("playing previous")
-        self.music_player.load_and_play_song(self.music_player.playlist_index)
-
-        # UPDATE SELECTION
-        self.music_player.playlist_frame.song_list.selection_clear(0, tk.END)
-        self.music_player.playlist_frame.song_list.select_set(
-            self.music_player.playlist_index
-        )
+            logging.debug("updated play button to play")
 
     # TRUNCATOR
     def set_music_title(self, title, artist):
@@ -132,6 +107,7 @@ class ControlBar(ctk.CTkFrame):
             truncated_title = title[: self.title_max_chars - 3] + "..."
         else:
             truncated_title = title
+        logging.debug("truncated title been set to %s", title)
         self.music_title_label.configure(
             text=truncated_title + " - " + artist.replace("/", ",")
         )
