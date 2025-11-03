@@ -42,7 +42,7 @@ class MusicPlayer(ctk.CTk):
         self.current_folder = ""
 
         self.loop = loop if loop is not None else asyncio.new_event_loop()
-        self.downloader = spotdl.Downloader(spotdl.DownloaderOptions(threads=4))
+        self.downloader = spotdl.Downloader(spotdl.DownloaderOptions(threads=2))
         spotdl.SpotifyClient.init(
             "5f573c9620494bae87890c0f08a60293",
             "212476d9b0f3472eaa762d90b19b0ba8",
@@ -84,9 +84,10 @@ class MusicPlayer(ctk.CTk):
         # CHANGE INFO
         self.change_info()
 
-        logging.info("playing %s", self.get_song_title())
+        logging.debug("playing %s", self.get_song_title())
 
     def change_info(self, event=None):
+        logging.debug("changing art,name of this song")
 
         self.cover_art_frame.cover_art_label.configure(
             require_redraw=True, image=self.get_album_cover(), fg_color="#121212"
@@ -98,10 +99,12 @@ class MusicPlayer(ctk.CTk):
         self.control_bar.update_play_button()
 
     def play_next_song(self, _event=None):
+        logging.debug("playing next song due to button press / keybind")
         self.music_list_player.next()
         self.change_info()
         # UPDATE SELECTION
         self.playlist_frame.song_list.selection_clear(0, tk.END)
+        self.playlist_index+=1
         self.playlist_frame.song_list.select_set(self.playlist_index)
 
     def play_previous(self, event=None):
@@ -109,6 +112,7 @@ class MusicPlayer(ctk.CTk):
         self.change_info()
         # UPDATE SELECTION
         self.playlist_frame.song_list.selection_clear(0, tk.END)
+        self.playlist_index-=1
         self.playlist_frame.song_list.select_set(self.playlist_index)
 
     def get_song_length(self) -> int:
