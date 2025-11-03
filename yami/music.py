@@ -108,6 +108,7 @@ class MusicPlayer(ctk.CTk):
         self.playlist_frame.song_list.select_set(self.playlist_index)
 
     def play_previous(self, event=None):
+        logging.debug("playing previous song due to button press / keybind")
         self.music_list_player.previous()
         self.change_info()
         # UPDATE SELECTION

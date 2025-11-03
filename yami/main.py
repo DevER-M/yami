@@ -5,7 +5,7 @@ from yami.music import MusicPlayer
 
 """add sys args and logs"""
 
-logging.getLogger().setLevel(logging.INFO)
+logging.getLogger().setLevel(logging.DEBUG)
 
 
 def entry():
