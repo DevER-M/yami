@@ -77,57 +77,18 @@ class MusicPlayer(ctk.CTk):
 
         # UPDATE LOOP
         #self.after(EVENT_INTERVAL, self.update)
-        event_manager=self.music.event_manager()
-        event_manager.event_attach(vlc.EventType.MediaPlayerEndReached,self.play_next_song)
-        #event_manager.event_attach(vlc.EventType.MediaPlayerPositionChanged,self.update)
-        #self.update_loop()
-        self.after(EVENT_INTERVAL,self.update)
-
-    '''def update(self,*args):
-        if self.music.get_state()== vlc.State.Opening:
-            self.after(EVENT_INTERVAL, self.update)
-
-        
-        if self.music.get_state() == vlc.State.Playing:
-            song_position = self.get_song_position()
-            self.song_length=self.music.get_length()//1000
-            
-            curtime=song_position*self.music.get_length()//1000
-            #print(curtime,song_position,self.music.get_length())
-
-            # GETS RATIO OF PROGRESS
-            #progress = song_position / self.song_length
-            self.bottom_frame.progress_bar.set(song_position)
-
-            minutes = int(curtime // 60)  # logic wrong 
-            seconds = int(curtime % 60)
-
-            song_min = int(self.song_length // 60)
-            song_sec = int(self.song_length % 60)
-
-            time_string = (
-                f"{minutes:02d}:{seconds:02d} / {song_min:02d}:{song_sec:02d}"
-            )
-            self.control_bar.playback_label.configure(text=time_string)
-
-            #if self.music.get_state()==vlc.State.Ended: # check is still song is not over or not song position less than song length means not yet reached end
-             #   print("hi")
-            self.after(EVENT_INTERVAL, self.update)
-        elif self.music.get_state()==vlc.State.Ended:
-            self.play_next_song()
-
-        elif self.music.get_state() == vlc.State.Paused:
-            self.after(EVENT_INTERVAL, self.update)
-        else:
-            self.bottom_frame.progress_bar.set(0)'''
-
+        self.event_manager=self.music.event_manager()
+        self.event_manager.event_attach(vlc.EventType.MediaPlayerEndReached,self.play_next_song)
+        self.event_manager.event_attach(vlc.EventType.MediaPlayerPositionChanged,self.update)
+        self.update_loop()
+        #self.after(EVENT_INTERVAL,self.update)
     
     def update(self,event=None):
-        if self.music.get_state()==vlc.State.Playing:
+        #if self.music.get_state()==vlc.State.Playing:
             song_position = self.get_song_position()
             self.song_length=self.music.get_length()//1000 # can make this global
             curtime=song_position*self.song_length
-            print(curtime,song_position,self.music.get_length())
+            #print(curtime,song_position,self.music.get_length())
             
     
             self.bottom_frame.progress_bar.set(song_position)
@@ -140,17 +101,23 @@ class MusicPlayer(ctk.CTk):
 
             time_string = (f"{cur_minutes:02d}:{cur_seconds:02d} / {song_min:02d}:{song_sec:02d}")
             self.control_bar.playback_label.configure(text=time_string)
-        self.after(EVENT_INTERVAL,self.update)
+        #self.after(EVENT_INTERVAL,self.update)
 
     def load_and_play_song(self, index):
-        try:
+            logging.info("playing index %s",self.playlist[index])
+        #try:
             # MUSIC
             #self.music.unload()
             #self.music.stop()
-            self.media=vlc.Media(self.playlist[index])
+            self.music.stop()
+            logging.info("music stopped")
+            self.media=self.vlc_instance.media_new(self.playlist[index])
+            logging.info(self.media.get_mrl())
             self.music.set_media(self.media)
             #self.music.load(self.playlist[index])
             self.music.play()
+            
+            
             #self.STATE = PlayerState.PLAYING
             self.playlist_index = index
 
@@ -174,26 +141,24 @@ class MusicPlayer(ctk.CTk):
             )
             
 
-        except Exception as e:
-            logging.exception(e)
+        #except Exception as e:
+         #   logging.exception(e)
 
     def play_next_song(self, _event=None):
-        print(_event)
         if not self.playlist:
             return
-        print("hi")
 
         # PLAY FROM BEGINING
         if self.playlist_index >= len(self.playlist) - 1:
             self.playlist_index = 0
         else:
             self.playlist_index += 1
+        logging.info("playing next song %s",self.playlist[self.playlist_index])
+        
         self.load_and_play_song(self.playlist_index)
-
         # UPDATE SELECTION
         self.playlist_frame.song_list.selection_clear(0, tk.END)
         self.playlist_frame.song_list.select_set(self.playlist_index)
-        logging.info("playing next song")
 
     def get_song_length(self, file_path):
         '''audio = File(file_path)
@@ -243,13 +208,11 @@ class MusicPlayer(ctk.CTk):
         except Exception as e:
             logging.error(e)
             return"""
-         # gives the direct uri to cover jpg
         try:
             self.media.parse()
-            print(self.media.get_meta(15))
             return ctk.CTkImage(
                 self.round_corners(
-                    Image.open(Path.from_uri(self.media.get_meta(15))),
+                    Image.open(Path.from_uri(self.media.get_meta(15))),          # gives the direct uri to cover jpg
                         20),
                 size=(250,250)
             )
@@ -287,8 +250,11 @@ class MusicPlayer(ctk.CTk):
     def initialize_vlc(self):
         #pygame.init()
         #pygame.mixer.init()
-        self.vlc_instance=vlc.Instance()
-        self.music=vlc.MediaPlayer()
+
+        self.music:vlc.MediaPlayer=vlc.MediaPlayer()
+        self.vlc_instance=self.music.get_instance()
+        
+        
         
         #self.music = pygame.mixer.music
 
@@ -320,10 +286,10 @@ class MusicPlayer(ctk.CTk):
         self.bind("<F9>", self.control_bar.play_pause)
         self.bind("<space>", self.control_bar.play_pause)
 
-    '''def update_loop(self):
+    def update_loop(self):
         self.loop.call_soon(self.loop.stop)
         self.loop.run_forever()
-        self.after(1000, self.update_loop)'''
+        self.after(1000, self.update_loop)
 
 
 if __name__ == "__main__":
