@@ -82,7 +82,6 @@ class TopBar(ctk.CTkFrame):
             for file in music_files:
                 file_path = os.path.join(root, file)
                 media = self.parent.vlc_instance.media_new(file_path)
-                print(media.get_mrl())
                 self.parent.media_list.add_media(media)
                 self.parent.playlist_frame.song_list.insert(
                     "end", f"• {Path(file).stem}"

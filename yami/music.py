@@ -57,13 +57,9 @@ class MusicPlayer(ctk.CTk):
 
         self.setup_keybindings()
 
-        # UPDATE LOOP
-        # self.after(EVENT_INTERVAL, self.update)
+        
         self.event_manager = self.music_list_player.event_manager()
-        self.event_manager.event_attach(
-            vlc.EventType.MediaListPlayerNextItemSet, self.play_next_song
-        )
-        # self.event_manager.event_attach(vlc.EventType.MediaPlayerPositionChanged,self.update)
+        self.event_manager.event_attach(vlc.EventType.MediaListPlayerNextItemSet, self.change_info)
         self.update_loop()
         self.after(EVENT_INTERVAL, self.update)
 
@@ -83,41 +79,39 @@ class MusicPlayer(ctk.CTk):
 
         self.music_list_player.pause()
         self.music_list_player.play_item_at_index(index)
-
-        # self.STATE = PlayerState.PLAYING
         self.playlist_index = index
 
         # CHANGE INFO
-        cover_image = self.get_album_cover()
-        self.cover_art_frame.cover_art_label.configure(
-            require_redraw=True, image=cover_image, fg_color="#121212"
-        )
+        self.change_info()
 
+        logging.info("playing %s", self.get_song_title())
+
+    def change_info(self,event=None):
+        
+        self.cover_art_frame.cover_art_label.configure(
+            require_redraw=True, 
+            image=self.get_album_cover(), 
+            fg_color="#121212"
+        )
         self.control_bar.set_music_title(  # truncates longer titles
             self.get_song_title(),
             self.get_song_artist(),
         )
         self.control_bar.update_play_button()
 
-        self.bottom_frame.start_progress_bar(
-            self.get_song_length(self.playlist[index]),
-        )
-        logging.info("playing %s", self.get_song_title())
-
-        # except Exception as e:
-        #   logging.exception(e)
-
     def play_next_song(self, _event=None):
-
-        """self.load_and_play_song(self.playlist_index)"""
         self.music_list_player.next()
+        self.change_info()
         # UPDATE SELECTION
         self.playlist_frame.song_list.selection_clear(0, tk.END)
-        self.playlist_frame.song_list.select_set(
-            self.media_list.index_of_item(
-                self.music_list_player.get_media_player().get_media()
-            )
-        )
+        self.playlist_frame.song_list.select_set(self.playlist_index)
+    
+    def play_previous(self, event=None):
+        self.music_list_player.previous()
+        self.change_info()
+        # UPDATE SELECTION
+        self.playlist_frame.song_list.selection_clear(0, tk.END)
+        self.playlist_frame.song_list.select_set(self.playlist_index)
 
     def get_song_length(self) -> int:
         return self.music.get_length()
@@ -213,7 +207,7 @@ class MusicPlayer(ctk.CTk):
         '''
 
         self.bind("<F10>", self.play_next_song)
-        self.bind("<F8>", self.control_bar.play_previous)
+        self.bind("<F8>", self.play_previous)
         self.bind("<F9>", self.control_bar.play_pause)
         self.bind("<space>", self.control_bar.play_pause)
 
