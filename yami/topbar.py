@@ -54,12 +54,13 @@ class TopBar(ctk.CTkFrame):
         self.open_folder.grid(row=0, column=1, sticky="w", pady=5, padx=10)
         self.music_downloader.grid(row=0, column=2, sticky="w", pady=5, padx=10)
         self.yami.grid(row=0, column=3, sticky="w", pady=5, padx=10)
-
-        # BINDINGS
-        self.parent.bind("<Control-o>", self.choose_folder)
+        logging.debug("initialized topbar")
 
     # FOR ADDING SONGS TO PLAYLIST
+    """TODO MAKE IT SMALLER AND SIMPLER"""
+
     def choose_folder(self, _event=None):
+
         self.parent.current_folder = filedialog.askdirectory(
             title="Select Music Folder"
         )
@@ -68,12 +69,11 @@ class TopBar(ctk.CTkFrame):
 
         # CLEAR PLAYLIST AND LISTBOX
         self.parent.playlist_frame.song_list.delete(0, tk.END)
-        # self.parent.playlist.clear()
         self.parent.media_list: vlc.MediaList = (
             self.parent.vlc_instance.media_list_new()
         )
+
         self.parent.music_list_player.set_media_list(self.parent.media_list)
-        vlc.MediaList.add_media
 
         # FILTER MUSIC FILES
         for root, _, files in os.walk(self.parent.current_folder):
@@ -82,9 +82,10 @@ class TopBar(ctk.CTkFrame):
             for file in music_files:
                 file_path = os.path.join(root, file)
                 media = self.parent.vlc_instance.media_new(file_path)
+                artistname, title = self.get_name_and_title_of_media(media)
                 self.parent.media_list.add_media(media)
                 self.parent.playlist_frame.song_list.insert(
-                    "end", f"• {Path(file).stem}"
+                    "end", f"• {title} - {artistname}"
                 )
         os.chdir(self.parent.current_folder)
 
@@ -96,6 +97,20 @@ class TopBar(ctk.CTkFrame):
         )
         if song_url:
             self.parent.loop.create_task(self.download_song(song_url))
+
+    def get_name_and_title_of_media(self, media):
+        """gets song artist name and title of song"""
+
+        logging.debug("got song artist name + title of song for playlist")
+        try:
+            if media.is_parsed():
+                return media.get_meta(1), media.get_meta(0)
+            else:
+                media.parse()
+                return media.get_meta(1), media.get_meta(0)
+        except Exception as e:
+            logging.exception(e)
+            return ""
 
     async def download_song(self, song_url):
         try:

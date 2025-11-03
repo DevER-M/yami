@@ -76,17 +76,17 @@ class ControlBar(ctk.CTkFrame):
         self.prev_button.grid(row=0, column=2, sticky="nsew", padx=5, pady=10)
         self.play_button.grid(row=0, column=3, sticky="nsew", padx=5, pady=10)
         self.next_button.grid(row=0, column=4, sticky="nsew", padx=5, pady=10)
+        logging.debug("initialized control bar")
 
     def play_pause(self, event=None):
         """Plays Or Pauses The Music"""
 
         if self.parent.music_list_player.get_state() == vlc.State.Playing:
             self.parent.music_list_player.pause()
-            logging.info("paused")
+            logging.debug("paused")
         else:
             self.parent.music_list_player.play()
-
-            logging.info("resumed")
+            logging.debug("resumed")
         self.update_play_button()
 
     def update_play_button(self):
@@ -94,10 +94,10 @@ class ControlBar(ctk.CTkFrame):
 
         if self.parent.music_list_player.get_state() == vlc.State.Playing:
             self.play_button.configure(image=self.pause_icon)
+            logging.debug("updated play button to pause")
         else:
             self.play_button.configure(image=self.play_icon)
-
-    
+            logging.debug("updated play button to play")
 
     # TRUNCATOR
     def set_music_title(self, title, artist):
@@ -107,6 +107,7 @@ class ControlBar(ctk.CTkFrame):
             truncated_title = title[: self.title_max_chars - 3] + "..."
         else:
             truncated_title = title
+        logging.debug("truncated title been set to %s", title)
         self.music_title_label.configure(
             text=truncated_title + " - " + artist.replace("/", ",")
         )

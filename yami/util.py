@@ -13,7 +13,7 @@ class PlayerState(Enum):
     STOPPED = 3
 
 
-def make_time_string(song_position,song_length):
+def make_time_string(song_position, song_length):
     curtime = song_position * song_length
 
     cur_minutes = int(curtime // 60)
@@ -23,4 +23,3 @@ def make_time_string(song_position,song_length):
     song_sec = int(song_length % 60)
 
     return f"{cur_minutes:02d}:{cur_seconds:02d} / {song_min:02d}:{song_sec:02d}"
-                
