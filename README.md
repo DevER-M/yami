@@ -1,6 +1,6 @@
 <div align="center">
 
-![yami-logo](https://github.com/DevER-M/yami/blob/main/.assets/vector/default-monochrome-white.svg?raw=true)
+![yami-logo](https://github.com/DevER-M/yami/blob/main/.assets/vector/default-monochrome-black.svg?raw=true)
 ---
 ![Static Badge](https://img.shields.io/badge/pip_install-yami--music--player-purple)
 ![Static Badge](https://img.shields.io/badge/Language-Python-red)
